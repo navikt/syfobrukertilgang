@@ -1,2 +1,2 @@
 # syfobrukertilgang
-Håndterer tilgang til sykefraværsoppfølgingen for brukere i Selvbetjeningssone. Dette inkluderer sykmeldte og arbeidsgivere.
+Tilgangskontroll for brukere(innbygere) av sykefraværstoppfølgingen
