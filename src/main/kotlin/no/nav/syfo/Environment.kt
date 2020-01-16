@@ -17,10 +17,8 @@ fun getEnvironment(): Environment {
                 getEnvVar("APPLICATION_PORT", "8080").toInt(),
                 getEnvVar("APPLICATION_THREADS", "1").toInt(),
                 getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
-                getEnvVar("AADDISCOVERY_URL"),
-                getEnvVar("JWKKEYS_URL", "https://login.microsoftonline.com/common/discovery/keys"),
-                getEnvVar("JWT_ISSUER"),
-                getEnvVar("CLIENT_ID"),
+                getEnvVar("AAD_B2C_DISCOVERY_URL"),
+                getEnvVar("AAD_B2C_CLIENT_ID"),
                 getEnvVar("AKTORREGISTER_V1_URL"),
                 getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL")
         )
@@ -33,10 +31,8 @@ data class Environment(
         val applicationPort: Int,
         val applicationThreads: Int,
         val applicationName: String,
-        val aadDiscoveryUrl: String,
-        val jwkKeysUrl: String,
-        val jwtIssuer: String,
-        val clientid: String,
+        val aadb2cDiscoveryUrl: String,
+        val aadb2cClientId: String,
         val aktoerregisterV1Url: String,
         val stsRestUrl: String
 )

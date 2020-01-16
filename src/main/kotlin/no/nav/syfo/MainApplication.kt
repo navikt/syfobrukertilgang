@@ -1,10 +1,15 @@
 package no.nav.syfo
 
+import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.*
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
+import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.jwt.jwt
 import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
 import io.ktor.http.HttpHeaders
@@ -17,15 +22,18 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.*
-import kotlinx.coroutines.slf4j.MDCContext
+import net.logstash.logback.argument.StructuredArguments
+import no.nav.syfo.api.getWellKnown
 import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.aktor.AktorService
 import no.nav.syfo.client.aktor.AktorregisterClient
 import no.nav.syfo.client.sts.StsRestClient
+import no.nav.syfo.tilgang.registerAnsattTilgangApi
 import no.nav.syfo.util.*
 import org.slf4j.LoggerFactory
+import java.net.URL
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
@@ -38,8 +46,6 @@ private val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
-
-val backgroundTasksContext = Executors.newFixedThreadPool(4).asCoroutineDispatcher() + MDCContext()
 
 fun main() {
     val vaultSecrets = VaultSecrets(
@@ -99,6 +105,17 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
         header(NAV_CALL_ID_HEADER)
     }
 
+    val wellKnown = getWellKnown(env.aadb2cDiscoveryUrl)
+    val jwkProvider = JwkProviderBuilder(URL(wellKnown.jwks_uri))
+            .cached(10, 24, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES)
+            .build()
+    installAuthentication(
+            jwkProvider,
+            wellKnown.issuer,
+            env.aadb2cClientId
+    )
+
     install(StatusPages) {
         exception<Throwable> { cause ->
             call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
@@ -122,6 +139,9 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 
     routing {
         registerNaisApi(state)
+        authenticate("jwt") {
+            registerAnsattTilgangApi()
+        }
     }
 
     state.initialized = true

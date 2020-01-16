@@ -2,10 +2,8 @@
     "applicationPort": "8081",
     "applicationThreads": "1",
     "applicationName": "syfobrukertilgang",
-    "aadDiscoveryUrl": "https://login.microsoftonline.com/navq.onmicrosoft.com/.well-known/openid-configuration",
-    "jwkKeysUrl": "https://login.microsoftonline.com/common/discovery/keys",
-    "jwtIssuer": "https://sts.windows.net/XXXXXXXX/",
-    "clientid": "999999",
+    "aadb2cDiscoveryUrl": "https://login.microsoftonline.com/navq.onmicrosoft.com/.well-known/openid-configuration",
+    "aadb2cClientId": "999999",
     "stsRestUrl": "http://localhost:8080",
     "aktoerregisterV1Url": "http://localhost:8080"
 }
