@@ -4,6 +4,7 @@ object UserConstants {
 
     private const val MOCK_AKTORID_PREFIX = "10"
 
+    const val LEDER_FNR = "12345678913"
     const val ARBEIDSTAKER_FNR = "12345678912"
     val ARBEIDSTAKER_AKTORID = mockAktorId(ARBEIDSTAKER_FNR)
 
