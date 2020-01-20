@@ -49,12 +49,6 @@ spec:
   env:
     - name: KTOR_ENV
       value: production
-    - name: CLIENT_ID
-      value: ""
-    - name: AADDISCOVERY_URL
-      value: ""
-    - name: JWT_ISSUER
-      value: ""
     - name: AKTORREGISTER_V1_URL
       value: "https://app-q1.adeo.no/aktoerregister/api/v1"
     - name: SECURITY_TOKEN_SERVICE_REST_URL
