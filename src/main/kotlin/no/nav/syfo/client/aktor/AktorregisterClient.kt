@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger(AktorregisterClient::class.java)
 
-class AktorregisterClient(val baseUrl: String, val stsRestClient: StsRestClient) {
+class AktorregisterClient(
+        private val baseUrl: String,
+        private val stsRestClient: StsRestClient
+) {
 
     fun getIdenter(ident: String, callId: String): Either<String, List<Ident>> {
         val bearer = stsRestClient.token()

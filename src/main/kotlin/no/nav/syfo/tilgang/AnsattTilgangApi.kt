@@ -27,7 +27,7 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
 
                 credentials?.let { creds ->
                     val loggedInFnr = creds.payload.subject
-                    if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
+                    if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr, callId)) {
                         call.respond(true)
                     } else {
                         log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", CallIdArgument(callId))

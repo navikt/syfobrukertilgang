@@ -127,7 +127,7 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     val aktorregisterClient = AktorregisterClient(env.aktoerregisterV1Url, stsClientRest)
     val aktorService = AktorService(aktorregisterClient)
 
-    val ansattTilgangService = AnsattTilgangService()
+    val ansattTilgangService = AnsattTilgangService(aktorService)
 
     routing {
         registerNaisApi(state)
