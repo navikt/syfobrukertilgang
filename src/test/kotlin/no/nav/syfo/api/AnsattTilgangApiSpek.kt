@@ -16,10 +16,15 @@ import io.ktor.routing.routing
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
+import io.mockk.coEvery
+import io.mockk.mockk
 import no.nav.syfo.application.installAuthentication
+import no.nav.syfo.client.aktor.AktorService
+import no.nav.syfo.client.aktor.domain.Fodselsnummer
 import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
+import no.nav.syfo.testutil.UserConstants.mockAktorId
 import no.nav.syfo.testutil.generateJWT
 import no.nav.syfo.tilgang.*
 import no.nav.syfo.util.bearerHeader
@@ -30,6 +35,9 @@ import java.nio.file.Paths
 
 @InternalAPI
 object AnsattTilgangApiSpek : Spek({
+    val aktorServiceMock = mockk<AktorService>()
+
+    val ansattTilgangService = AnsattTilgangService(aktorServiceMock)
 
     val issuerUrl = "https://sts.issuer.net/myid"
 
@@ -40,9 +48,20 @@ object AnsattTilgangApiSpek : Spek({
     val acceptedClientId = "2"
     val notAcceptedClientId = "4"
 
-    describe("AnsattTilgangApi") {
-        val ansattTilgangService = AnsattTilgangService()
+    val ansattAktorId = mockAktorId(ARBEIDSTAKER_FNR)
+    val lederAktorId = mockAktorId(LEDER_FNR)
 
+    beforeEachTest {
+        coEvery {
+            aktorServiceMock.aktorForFodselsnummer(Fodselsnummer(ARBEIDSTAKER_FNR), any())
+        } returns ansattAktorId
+
+        coEvery {
+            aktorServiceMock.aktorForFodselsnummer(Fodselsnummer(LEDER_FNR), any())
+        } returns lederAktorId
+    }
+
+    describe("AnsattTilgangApi") {
         with(TestApplicationEngine()) {
             start()
 

@@ -27,4 +27,15 @@ class AktorService(private val aktorregisterClient: AktorregisterClient) {
         }
         return fnr
     }
+
+    fun aktorForFodselsnummer(fodselsnummer: Fodselsnummer, callId: String): String? {
+        var aktorId: String? = null
+        getAktorForFodselsnummer(fodselsnummer, callId).mapLeft {
+            log.info("Fant ikke aktorId for fnr")
+            throw IllegalStateException("Fant ikke fnr")
+        }.map {
+            aktorId = it
+        }
+        return aktorId
+    }
 }

@@ -5,7 +5,11 @@ import no.nav.syfo.util.responseJSON
 import org.json.JSONObject
 import java.time.LocalDateTime
 
-class StsRestClient(val baseUrl: String, val username: String, val password: String) {
+class StsRestClient(
+        val baseUrl: String,
+        val username: String,
+        val password: String
+) {
     private var cachedOidcToken: Token? = null
 
     fun token(): String {
