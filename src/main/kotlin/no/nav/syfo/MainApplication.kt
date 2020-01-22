@@ -24,6 +24,7 @@ import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.aktor.AktorService
 import no.nav.syfo.client.aktor.AktorregisterClient
 import no.nav.syfo.client.sts.StsRestClient
+import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
 import no.nav.syfo.util.*
 import org.slf4j.LoggerFactory
@@ -126,10 +127,12 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     val aktorregisterClient = AktorregisterClient(env.aktoerregisterV1Url, stsClientRest)
     val aktorService = AktorService(aktorregisterClient)
 
+    val ansattTilgangService = AnsattTilgangService()
+
     routing {
         registerNaisApi(state)
         authenticate("jwt") {
-            registerAnsattTilgangApi()
+            registerAnsattTilgangApi(ansattTilgangService)
         }
     }
 

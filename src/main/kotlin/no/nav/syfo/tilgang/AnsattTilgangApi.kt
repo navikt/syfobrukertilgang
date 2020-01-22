@@ -14,7 +14,7 @@ private val log: Logger = LoggerFactory.getLogger("no.nav.syfo")
 
 const val basePath: String = "/api/v1/tilgang/ansatt"
 
-fun Route.registerAnsattTilgangApi() {
+fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
     route(basePath) {
         get("/{fnr}") {
             try {
@@ -27,7 +27,7 @@ fun Route.registerAnsattTilgangApi() {
 
                 credentials?.let { creds ->
                     val loggedInFnr = creds.payload.subject
-                    if (hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
+                    if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
                         call.respond(true)
                     } else {
                         log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", CallIdArgument(callId))
@@ -40,8 +40,4 @@ fun Route.registerAnsattTilgangApi() {
             }
         }
     }
-}
-
-fun hasAccessToAnsatt(loggedInFnr: String, ansattFnr: String): Boolean {
-    return loggedInFnr == ansattFnr
 }

@@ -21,8 +21,7 @@ import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
 import no.nav.syfo.testutil.generateJWT
-import no.nav.syfo.tilgang.basePath
-import no.nav.syfo.tilgang.registerAnsattTilgangApi
+import no.nav.syfo.tilgang.*
 import no.nav.syfo.util.bearerHeader
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -42,6 +41,8 @@ object AnsattTilgangApiSpek : Spek({
     val notAcceptedClientId = "4"
 
     describe("AnsattTilgangApi") {
+        val ansattTilgangService = AnsattTilgangService()
+
         with(TestApplicationEngine()) {
             start()
 
@@ -49,11 +50,10 @@ object AnsattTilgangApiSpek : Spek({
                     jwkProvider,
                     issuerUrl,
                     acceptedClientId
-
             )
             application.routing {
                 authenticate("jwt") {
-                    registerAnsattTilgangApi()
+                    registerAnsattTilgangApi(ansattTilgangService)
                 }
             }
 
