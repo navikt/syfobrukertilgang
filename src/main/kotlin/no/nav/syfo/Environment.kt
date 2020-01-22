@@ -19,8 +19,11 @@ fun getEnvironment(): Environment {
                 getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
                 getEnvVar("AAD_B2C_DISCOVERY_URL"),
                 getEnvVar("AAD_B2C_CLIENT_ID"),
+                getEnvVar("AAD_ACCESSTOKEN_URL"),
                 getEnvVar("AKTORREGISTER_V1_URL"),
-                getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL")
+                getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL"),
+                getEnvVar("SYFONARMESTELEDER_ID"),
+                getEnvVar("SYFONARMESTELEDER_URL", "http//syfonarmesteleder")
         )
     }
 }
@@ -33,11 +36,16 @@ data class Environment(
         val applicationName: String,
         val aadb2cDiscoveryUrl: String,
         val aadb2cClientId: String,
+        val aadAccessTokenUrl: String,
         val aktoerregisterV1Url: String,
-        val stsRestUrl: String
+        val stsRestUrl: String,
+        val narmestelederId: String,
+        val narmestelederUrl: String
 )
 
 data class VaultSecrets(
+        val clientId: String,
+        val clientSecret: String,
         val serviceuserUsername: String,
         val serviceuserPassword: String
 )
