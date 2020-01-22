@@ -1,15 +1,12 @@
 package no.nav.syfo
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.*
-import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
 import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
 import io.ktor.http.HttpHeaders
@@ -21,8 +18,6 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.*
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.*
-import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.api.getWellKnown
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.application.installAuthentication
@@ -40,13 +35,7 @@ data class ApplicationState(var running: Boolean = true, var initialized: Boolea
 
 val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplicationKt")
 
-private val objectMapper: ObjectMapper = ObjectMapper().apply {
-    registerKotlinModule()
-    registerModule(JavaTimeModule())
-    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-}
-
+@KtorExperimentalAPI
 fun main() {
     val vaultSecrets = VaultSecrets(
             serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
@@ -146,16 +135,6 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 
     state.initialized = true
 }
-
-
-fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        launch {
-            try {
-                action()
-            } finally {
-                applicationState.running = false
-            }
-        }
 
 val Application.envKind get() = environment.config.property("ktor.environment").getString()
 

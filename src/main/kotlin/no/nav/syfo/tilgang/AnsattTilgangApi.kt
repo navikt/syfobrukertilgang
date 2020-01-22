@@ -1,6 +1,8 @@
 package no.nav.syfo.tilgang
 
 import io.ktor.application.call
+import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.*
@@ -12,23 +14,24 @@ private val log: Logger = LoggerFactory.getLogger("no.nav.syfo")
 
 const val basePath: String = "/api/v1/tilgang/ansatt"
 
-fun Route.registerAnsattTilgangApi(
-) {
+fun Route.registerAnsattTilgangApi() {
     route(basePath) {
         get("/{fnr}") {
             try {
-                val fnr: String = call.parameters["fnr"]?.takeIf { validateFnr(it) }
+                val ansattFnr: String = call.parameters["fnr"]?.takeIf { validateFnr(it) }
                         ?: throw IllegalArgumentException("Fnr mangler")
 
                 val callId = getCallId()
 
-                when (true) {
-                    true -> {
-                        call.respond(HttpStatusCode.NoContent)
-                    }
-                    else -> {
-                        log.error("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", CallIdArgument(callId))
-                        call.respond(HttpStatusCode.Forbidden, "Ikke tilgang til ansatt")
+                val credentials = call.principal<JWTPrincipal>()
+
+                credentials?.let { creds ->
+                    val loggedInFnr = creds.payload.subject
+                    if (hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
+                        call.respond(true)
+                    } else {
+                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", CallIdArgument(callId))
+                        call.respond(false)
                     }
                 }
             } catch (e: IllegalArgumentException) {
@@ -37,4 +40,8 @@ fun Route.registerAnsattTilgangApi(
             }
         }
     }
+}
+
+fun hasAccessToAnsatt(loggedInFnr: String, ansattFnr: String): Boolean {
+    return loggedInFnr == ansattFnr
 }

@@ -15,10 +15,11 @@ import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.InternalAPI
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
+import no.nav.syfo.testutil.UserConstants.LEDER_FNR
 import no.nav.syfo.testutil.generateJWT
 import no.nav.syfo.tilgang.basePath
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
@@ -28,8 +29,8 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Paths
 
-@KtorExperimentalAPI
-object AnsattTilgangApiTest : Spek({
+@InternalAPI
+object AnsattTilgangApiSpek : Spek({
 
     val issuerUrl = "https://sts.issuer.net/myid"
 
@@ -72,16 +73,30 @@ object AnsattTilgangApiTest : Spek({
             }
 
             describe("Check access to Ansatt") {
-                it("should return 2xx-response with valid JWT and accepted audience") {
-                    with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
-                        addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
-                                ?: ""))
-                    }) {
-                        response.status() shouldEqual HttpStatusCode.NoContent
+
+                describe("with valid JWT and accepted audience") {
+                    it("should return 200 true when Ansatt is self") {
+                        with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
+                            addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
+                                    ?: ""))
+                        }) {
+                            response.status() shouldEqual HttpStatusCode.OK
+                            response.content shouldEqual true.toString()
+                        }
+                    }
+
+                    it("should return 200 false when Ansatt is not self") {
+                        with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
+                            addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
+                                    ?: ""))
+                        }) {
+                            response.status() shouldEqual HttpStatusCode.OK
+                            response.content shouldEqual false.toString()
+                        }
                     }
                 }
 
-                it("should return 2xx-response valid JWT and unaccepted audience") {
+                it("should return 401 with valid JWT and unaccepted audience") {
                     with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
                         addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, notAcceptedClientId)
                                 ?: ""))

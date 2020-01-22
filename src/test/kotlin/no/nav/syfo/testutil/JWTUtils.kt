@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
+import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -11,14 +12,13 @@ import java.nio.file.Paths
 import java.text.ParseException
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 fun generateJWT(
     consumerClientId: String,
     audience: String,
     expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
-    subject: String = "subject",
+    subject: String = ARBEIDSTAKER_FNR,
     issuer: String = "https://sts.issuer.net/myid"
 ): String? {
     val now = Date()
