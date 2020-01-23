@@ -4,9 +4,9 @@ import io.prometheus.client.Counter
 
 const val METRICS_NS = "syfobrukertilgang"
 
-const val CALL_NARMESTELEDER = "call_pdl_count"
-const val CALL_NARMESTELEDER_SUCCESS = "call_pdl_success_count"
-const val CALL_NARMESTELEDER_FAIL = "call_pdl_fail_count"
+const val CALL_NARMESTELEDER = "call_narmesteleder_count"
+const val CALL_NARMESTELEDER_SUCCESS = "call_narmesteleder_success_count"
+const val CALL_NARMESTELEDER_FAIL = "call_narmesteleder_fail_count"
 val COUNT_CALL_NARMESTELEDER: Counter = Counter.build()
         .namespace(METRICS_NS)
         .name(CALL_NARMESTELEDER)
