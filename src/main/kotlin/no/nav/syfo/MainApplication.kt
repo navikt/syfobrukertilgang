@@ -23,6 +23,8 @@ import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.aktor.AktorService
 import no.nav.syfo.client.aktor.AktorregisterClient
+import no.nav.syfo.client.azuread.AzureADTokenClient
+import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.client.sts.StsRestClient
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
@@ -39,6 +41,8 @@ val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplication
 @KtorExperimentalAPI
 fun main() {
     val vaultSecrets = VaultSecrets(
+            clientId = getFileAsString("/secrets/azuread/syfobrukertilgang/client_id"),
+            clientSecret = getFileAsString("/secrets/azuread/syfobrukertilgang/client_secret"),
             serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
             serviceuserUsername = getFileAsString("/secrets/serviceuser/username")
     )
@@ -127,7 +131,18 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     val aktorregisterClient = AktorregisterClient(env.aktoerregisterV1Url, stsClientRest)
     val aktorService = AktorService(aktorregisterClient)
 
-    val ansattTilgangService = AnsattTilgangService(aktorService)
+    val azureADTokenClient = AzureADTokenClient(
+            baseUrl = env.aadAccessTokenUrl,
+            clientId = vaultSecrets.clientId,
+            clientSecret = vaultSecrets.clientSecret
+    )
+    val narmestelederClient = NarmestelederClient(
+            env.narmestelederUrl,
+            env.narmestelederId,
+            azureADTokenClient
+    )
+
+    val ansattTilgangService = AnsattTilgangService(aktorService, narmestelederClient)
 
     routing {
         registerNaisApi(state)

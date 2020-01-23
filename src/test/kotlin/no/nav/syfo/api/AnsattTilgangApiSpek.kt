@@ -21,6 +21,8 @@ import io.mockk.mockk
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.aktor.AktorService
 import no.nav.syfo.client.aktor.domain.Fodselsnummer
+import no.nav.syfo.client.narmesteleder.NarmestelederClient
+import no.nav.syfo.client.narmesteleder.domain.Ansatt
 import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
@@ -36,8 +38,9 @@ import java.nio.file.Paths
 @InternalAPI
 object AnsattTilgangApiSpek : Spek({
     val aktorServiceMock = mockk<AktorService>()
+    val narmestelederClientMock = mockk<NarmestelederClient>()
 
-    val ansattTilgangService = AnsattTilgangService(aktorServiceMock)
+    val ansattTilgangService = AnsattTilgangService(aktorServiceMock, narmestelederClientMock)
 
     val issuerUrl = "https://sts.issuer.net/myid"
 
@@ -51,6 +54,13 @@ object AnsattTilgangApiSpek : Spek({
     val ansattAktorId = mockAktorId(ARBEIDSTAKER_FNR)
     val lederAktorId = mockAktorId(LEDER_FNR)
 
+    val ansatte = listOf(
+            Ansatt(
+                    aktorId = ansattAktorId,
+                    virksomhetsnummer = ""
+            )
+    )
+
     beforeEachTest {
         coEvery {
             aktorServiceMock.aktorForFodselsnummer(Fodselsnummer(ARBEIDSTAKER_FNR), any())
@@ -59,6 +69,14 @@ object AnsattTilgangApiSpek : Spek({
         coEvery {
             aktorServiceMock.aktorForFodselsnummer(Fodselsnummer(LEDER_FNR), any())
         } returns lederAktorId
+
+        coEvery {
+            narmestelederClientMock.ansatte(ansattAktorId, any())
+        } returns ansatte
+
+        coEvery {
+            narmestelederClientMock.ansatte(lederAktorId, any())
+        } returns ansatte
     }
 
     describe("AnsattTilgangApi") {
@@ -94,17 +112,7 @@ object AnsattTilgangApiSpek : Spek({
             describe("Check access to Ansatt") {
 
                 describe("with valid JWT and accepted audience") {
-                    it("should return 200 true when Ansatt is self") {
-                        with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
-                            addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
-                                    ?: ""))
-                        }) {
-                            response.status() shouldEqual HttpStatusCode.OK
-                            response.content shouldEqual true.toString()
-                        }
-                    }
-
-                    it("should return 200 false when Ansatt is not self") {
+                    it("should return 200 false when not leader of Ansatt") {
                         with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
                             addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
                                     ?: ""))
@@ -113,10 +121,20 @@ object AnsattTilgangApiSpek : Spek({
                             response.content shouldEqual false.toString()
                         }
                     }
+
+                    it("should return 200 true when leader of Ansatt") {
+                        with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
+                            addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
+                                    ?: ""))
+                        }) {
+                            response.status() shouldEqual HttpStatusCode.OK
+                            response.content shouldEqual true.toString()
+                        }
+                    }
                 }
 
                 it("should return 401 with valid JWT and unaccepted audience") {
-                    with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
+                    with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
                         addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, notAcceptedClientId)
                                 ?: ""))
                     }) {

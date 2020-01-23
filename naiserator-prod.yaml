@@ -49,7 +49,11 @@ spec:
   env:
     - name: KTOR_ENV
       value: production
+    - name: AAD_ACCESSTOKEN_URL
+      value: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/token
     - name: AKTORREGISTER_V1_URL
       value: "https://app.adeo.no/aktoerregister/api/v1"
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: "https://security-token-service.nais.adeo.no"
+    - name: SYFONARMESTELEDER_URL
+      value: https://syfonarmesteleder.nais.adeo.no
