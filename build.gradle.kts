@@ -79,13 +79,13 @@ dependencies {
     implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$smCommonVersion")
     implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
 
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0")
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.9.0")
 
-    compile("io.ktor:ktor-jackson:$ktorVersion")
-    compile("io.ktor:ktor-client-jackson:$ktorVersion")
-    compile("io.ktor:ktor-auth:$ktorVersion")
-    compile("io.ktor:ktor-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
 
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
