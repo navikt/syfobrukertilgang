@@ -7,7 +7,7 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import no.nav.syfo.ApplicationState
 
-fun Routing.registerNaisApi(
+fun Routing.registerPodApi(
         applicationState: ApplicationState
 ) {
     get("/is_alive") {

@@ -144,7 +144,7 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     val ansattTilgangService = AnsattTilgangService(aktorService, narmestelederClient)
 
     routing {
-        registerNaisApi(state)
+        registerPodApi(state)
         registerPrometheusApi()
         authenticate("jwt") {
             registerAnsattTilgangApi(ansattTilgangService)
