@@ -18,8 +18,7 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.*
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.api.getWellKnown
-import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.api.*
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.aktor.AktorService
 import no.nav.syfo.client.aktor.AktorregisterClient
@@ -146,6 +145,7 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 
     routing {
         registerNaisApi(state)
+        registerPrometheusApi()
         authenticate("jwt") {
             registerAnsattTilgangApi(ansattTilgangService)
         }

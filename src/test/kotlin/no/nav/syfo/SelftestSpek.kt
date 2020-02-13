@@ -5,6 +5,7 @@ import io.ktor.routing.routing
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.api.registerPrometheusApi
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldNotEqual
 import org.spekframework.spek2.Spek
@@ -23,6 +24,7 @@ object SelftestSpek : Spek({
             start()
             application.routing {
                 registerNaisApi(applicationState)
+                registerPrometheusApi()
             }
 
             it("Returns ok on is_alive") {
