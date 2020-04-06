@@ -21,7 +21,7 @@ fun PipelineContext<out Unit, ApplicationCall>.getCallId(): String {
     return this.call.request.headers[NAV_CALL_ID_HEADER].toString()
 }
 
-fun CallIdArgument(callId: String) = StructuredArguments.keyValue("callId", callId)!!
+fun callIdArgument(callId: String) = StructuredArguments.keyValue("callId", callId)!!
 
 private val kafkaCounter = AtomicInteger(0)
 

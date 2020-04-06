@@ -30,12 +30,12 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                     if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr, callId)) {
                         call.respond(true)
                     } else {
-                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", CallIdArgument(callId))
+                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", callIdArgument(callId))
                         call.respond(false)
                     }
                 }
             } catch (e: IllegalArgumentException) {
-                log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}", e.message, CallIdArgument(getCallId()))
+                log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}", e.message, callIdArgument(getCallId()))
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
             }
         }
