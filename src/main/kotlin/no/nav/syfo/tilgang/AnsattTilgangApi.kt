@@ -21,21 +21,21 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                 val ansattFnr: String = call.parameters["fnr"]?.takeIf { validateFnr(it) }
                         ?: throw IllegalArgumentException("Fnr mangler")
 
-                val callId = getCallId()
-
                 val credentials = call.principal<JWTPrincipal>()
 
                 credentials?.let { creds ->
+                    val callId = getCallId()
+
                     val loggedInFnr = creds.payload.subject
                     if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr, callId)) {
                         call.respond(true)
                     } else {
-                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}", callIdArgument(callId))
+                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
                         call.respond(false)
                     }
                 }
             } catch (e: IllegalArgumentException) {
-                log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}", e.message, callIdArgument(getCallId()))
+                log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}", e.message, callIdArgument(getCallId()), consumerIdArgument(getConsumerId()))
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
             }
         }
