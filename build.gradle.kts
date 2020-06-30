@@ -6,7 +6,7 @@ group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
 val arrowVersion = "0.9.0"
-val coroutinesVersion = "1.3.3"
+val coroutinesVersion = "1.3.7"
 val fuelVersion = "1.15.1"
 val kluentVersion = "1.39"
 val ktorVersion = "1.3.2"
