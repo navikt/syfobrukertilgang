@@ -5,21 +5,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
-val arrowVersion = "0.9.0"
-val coroutinesVersion = "1.3.7"
-val fuelVersion = "1.15.1"
-val kluentVersion = "1.39"
-val ktorVersion = "1.3.2"
-val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "5.1"
-val prometheusVersion = "0.8.1"
-val spekVersion = "2.0.9"
-val jacksonVersion = "2.9.8"
-val mockkVersion = "1.10.0"
-val orgJsonVersion = "20180813"
-val gsonVersion = "2.8.0"
-val smCommonVersion = "2019.08.08-03-52-c78281e2409af36f3ef07df4369fa29b0ea81a46"
-val nimbusdsVersion = "7.5.1"
+object Versions {
+    const val arrowVersion = "0.9.0"
+    const val coroutinesVersion = "1.3.7"
+    const val fuelVersion = "1.15.1"
+    const val kluentVersion = "1.39"
+    const val kotlinSerializationVersion = "0.9.0"
+    const val ktorVersion = "1.3.2"
+    const val logbackVersion = "1.2.3"
+    const val logstashEncoderVersion = "5.1"
+    const val prometheusVersion = "0.8.1"
+    const val spekVersion = "2.0.9"
+    const val jacksonVersion = "2.9.8"
+    const val mockkVersion = "1.10.0"
+    const val orgJsonVersion = "20180813"
+    const val gsonVersion = "2.8.0"
+    const val smCommonVersion = "2019.08.08-03-52-c78281e2409af36f3ef07df4369fa29b0ea81a46"
+    const val nimbusdsVersion = "7.5.1"
+}
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
@@ -52,50 +55,51 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-    implementation("io.prometheus:simpleclient_common:$prometheusVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation("io.ktor:ktor-client-auth-basic-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:${Versions.coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinSerializationVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${Versions.kotlinSerializationVersion}")
 
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("io.prometheus:simpleclient_hotspot:${Versions.prometheusVersion}")
+    implementation("io.prometheus:simpleclient_common:${Versions.prometheusVersion}")
 
-    implementation("io.arrow-kt:arrow-core-data:$arrowVersion")
-    implementation("org.json:json:$orgJsonVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
+    implementation("io.ktor:ktor-server-netty:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-cio:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-apache:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-auth-basic-jvm:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-logging:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-logging-jvm:${Versions.ktorVersion}")
 
-    implementation("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
+    implementation("io.ktor:ktor-jackson:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-jackson:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-auth:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-auth-jwt:${Versions.ktorVersion}")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.9.0")
+    implementation("ch.qos.logback:logback-classic:${Versions.logbackVersion}")
+    implementation("net.logstash.logback:logstash-logback-encoder:${Versions.logstashEncoderVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.jacksonVersion}")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jacksonVersion}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jacksonVersion}")
 
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-auth:$ktorVersion")
-    implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
+    implementation("io.arrow-kt:arrow-core-data:${Versions.arrowVersion}")
+    implementation("org.json:json:${Versions.orgJsonVersion}")
+    implementation("com.google.code.gson:gson:${Versions.gsonVersion}")
+    implementation("com.github.kittinunf.fuel:fuel:${Versions.fuelVersion}")
 
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("io.mockk:mockk:$mockkVersion")
-    testImplementation("com.nimbusds:nimbus-jose-jwt:$nimbusdsVersion")
-    testRuntimeOnly("org.spekframework.spek2:spek-runtime-jvm:$spekVersion")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-networking:${Versions.smCommonVersion}")
+    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:${Versions.smCommonVersion}")
+    implementation("no.nav.syfo.sm:syfosm-common-models:${Versions.smCommonVersion}")
 
-    api("io.ktor:ktor-client-mock:$ktorVersion")
-    api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+    testImplementation("org.amshove.kluent:kluent:${Versions.kluentVersion}")
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:${Versions.spekVersion}")
+    testImplementation("io.ktor:ktor-server-test-host:${Versions.ktorVersion}")
+    testImplementation("io.mockk:mockk:${Versions.mockkVersion}")
+    testImplementation("com.nimbusds:nimbus-jose-jwt:${Versions.nimbusdsVersion}")
+    testRuntimeOnly("org.spekframework.spek2:spek-runtime-jvm:${Versions.spekVersion}")
+    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:${Versions.spekVersion}")
+
+    api("io.ktor:ktor-client-mock:${Versions.ktorVersion}")
+    api("io.ktor:ktor-client-mock-jvm:${Versions.ktorVersion}")
 }
 
 tasks {
