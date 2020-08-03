@@ -53,10 +53,6 @@ class AzureADTokenClient(
         registerModule(JavaTimeModule())
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
-
-    companion object {
-        private val LOG = LoggerFactory.getLogger(AzureADTokenClient::class.java)
-    }
 }
 
 data class Token(
