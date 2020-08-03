@@ -11,22 +11,22 @@ import org.slf4j.LoggerFactory
 private val log = LoggerFactory.getLogger(AktorregisterClient::class.java)
 
 class AktorregisterClient(
-        private val baseUrl: String,
-        private val stsRestClient: StsRestClient
+    private val baseUrl: String,
+    private val stsRestClient: StsRestClient
 ) {
 
     fun getIdenter(ident: String, callId: String): Either<String, List<Ident>> {
         val bearer = stsRestClient.token()
 
         val (_, _, result) = "$baseUrl/identer?gjeldende=true".httpGet()
-                .header(mapOf(
-                        "Authorization" to bearerHeader(bearer),
-                        "Accept" to "application/json",
-                        "Nav-Call-Id" to callId,
-                        "Nav-Consumer-Id" to "syfobrukertilgang",
-                        "Nav-Personidenter" to ident
-                ))
-                .responseString()
+            .header(mapOf(
+                "Authorization" to bearerHeader(bearer),
+                "Accept" to "application/json",
+                "Nav-Call-Id" to callId,
+                "Nav-Consumer-Id" to "syfobrukertilgang",
+                "Nav-Personidenter" to ident
+            ))
+            .responseString()
 
         val response = JSONObject(result.get())
 
@@ -69,6 +69,6 @@ enum class IdentType {
 }
 
 data class Ident(
-        val ident: String,
-        val type: IdentType
+    val ident: String,
+    val type: IdentType
 )

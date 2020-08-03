@@ -7,5 +7,4 @@ data class AktorId(val aktor: String) {
             throw IllegalArgumentException("$aktor cannot be empty")
         }
     }
-
 }

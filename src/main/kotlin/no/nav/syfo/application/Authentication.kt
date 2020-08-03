@@ -8,9 +8,9 @@ import io.ktor.auth.jwt.jwt
 import net.logstash.logback.argument.StructuredArguments
 
 fun Application.installAuthentication(
-        jwkProvider: JwkProvider,
-        issuer: String,
-        aadb2cClientId: String
+    jwkProvider: JwkProvider,
+    issuer: String,
+    aadb2cClientId: String
 ) {
     install(Authentication) {
         jwt(name = "jwt") {
@@ -18,10 +18,10 @@ fun Application.installAuthentication(
             validate { credentials ->
                 if (!credentials.payload.audience.contains(aadb2cClientId)) {
                     log.warn(
-                            "Auth: Unexpected audience for jwt {}, {}, {}",
-                            StructuredArguments.keyValue("issuer", credentials.payload.issuer),
-                            StructuredArguments.keyValue("audience", credentials.payload.audience),
-                            StructuredArguments.keyValue("expectedAudience", aadb2cClientId)
+                        "Auth: Unexpected audience for jwt {}, {}, {}",
+                        StructuredArguments.keyValue("issuer", credentials.payload.issuer),
+                        StructuredArguments.keyValue("audience", credentials.payload.audience),
+                        StructuredArguments.keyValue("expectedAudience", aadb2cClientId)
                     )
                     null
                 } else {
