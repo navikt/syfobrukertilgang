@@ -20,3 +20,6 @@ Run `./gradlew clean shadowJar`
 
 #### Test
 Run `./gradlew test -i`
+
+#### Lint
+Run `./gradlew --continue ktlintCheck`

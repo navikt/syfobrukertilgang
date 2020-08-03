@@ -10,18 +10,18 @@ import java.time.Instant
 import java.time.LocalDateTime
 
 class AzureADTokenClient(
-        private val baseUrl: String,
-        private val clientId: String,
-        private val clientSecret: String
+    private val baseUrl: String,
+    private val clientId: String,
+    private val clientSecret: String
 ) {
     private var token: Token = Token(
-            token_type = "not a token",
-            expires_in = 0,
-            ext_expires_in = 0,
-            access_token = "not a token",
-            expires_on = Instant.now(),
-            not_before = "",
-            resource = ""
+        token_type = "not a token",
+        expires_in = 0,
+        ext_expires_in = 0,
+        access_token = "not a token",
+        expires_on = Instant.now(),
+        not_before = "",
+        resource = ""
     )
     private var expiry: LocalDateTime = LocalDateTime.now().minusYears(100)
 
@@ -37,12 +37,12 @@ class AzureADTokenClient(
 
     private fun requestAccessToken(resource: String): Token {
         val (_, _, result) = baseUrl.httpPost(
-                listOf(
-                        "client_id" to clientId,
-                        "client_secret" to clientSecret,
-                        "grant_type" to "client_credentials",
-                        "resource" to resource
-                )
+            listOf(
+                "client_id" to clientId,
+                "client_secret" to clientSecret,
+                "grant_type" to "client_credentials",
+                "resource" to resource
+            )
         ).response()
 
         return objectMapper.readValue(result.get())
@@ -60,11 +60,11 @@ class AzureADTokenClient(
 }
 
 data class Token(
-        val access_token: String,
-        val token_type: String,
-        val expires_in: Long,
-        val ext_expires_in: Long,
-        val expires_on: Instant?,
-        val not_before: String?,
-        val resource: String?
+    val access_token: String,
+    val token_type: String,
+    val expires_in: Long,
+    val ext_expires_in: Long,
+    val expires_on: Instant?,
+    val not_before: String?,
+    val resource: String?
 )

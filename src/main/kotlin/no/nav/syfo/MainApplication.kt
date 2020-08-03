@@ -40,10 +40,10 @@ val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplication
 @KtorExperimentalAPI
 fun main() {
     val vaultSecrets = VaultSecrets(
-            clientId = getFileAsString("/secrets/azuread/syfobrukertilgang/client_id"),
-            clientSecret = getFileAsString("/secrets/azuread/syfobrukertilgang/client_secret"),
-            serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
-            serviceuserUsername = getFileAsString("/secrets/serviceuser/username")
+        clientId = getFileAsString("/secrets/azuread/syfobrukertilgang/client_id"),
+        clientSecret = getFileAsString("/secrets/azuread/syfobrukertilgang/client_secret"),
+        serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
+        serviceuserUsername = getFileAsString("/secrets/serviceuser/username")
     )
 
     val server = embeddedServer(Netty, applicationEngineEnvironment {
@@ -65,7 +65,6 @@ fun main() {
 
     server.start(wait = false)
 }
-
 
 val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
@@ -100,13 +99,13 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 
     val wellKnown = getWellKnown(env.aadb2cDiscoveryUrl)
     val jwkProvider = JwkProviderBuilder(URL(wellKnown.jwks_uri))
-            .cached(10, 24, TimeUnit.HOURS)
-            .rateLimited(10, 1, TimeUnit.MINUTES)
-            .build()
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
+        .build()
     installAuthentication(
-            jwkProvider,
-            wellKnown.issuer,
-            env.aadb2cClientId
+        jwkProvider,
+        wellKnown.issuer,
+        env.aadb2cClientId
     )
 
     install(StatusPages) {
@@ -131,14 +130,14 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     val aktorService = AktorService(aktorregisterClient)
 
     val azureADTokenClient = AzureADTokenClient(
-            baseUrl = env.aadAccessTokenUrl,
-            clientId = vaultSecrets.clientId,
-            clientSecret = vaultSecrets.clientSecret
+        baseUrl = env.aadAccessTokenUrl,
+        clientId = vaultSecrets.clientId,
+        clientSecret = vaultSecrets.clientSecret
     )
     val narmestelederClient = NarmestelederClient(
-            env.narmestelederUrl,
-            env.narmestelederId,
-            azureADTokenClient
+        env.narmestelederUrl,
+        env.narmestelederId,
+        azureADTokenClient
     )
 
     val ansattTilgangService = AnsattTilgangService(aktorService, narmestelederClient)

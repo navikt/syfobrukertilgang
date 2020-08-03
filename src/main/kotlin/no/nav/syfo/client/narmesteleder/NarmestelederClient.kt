@@ -14,9 +14,9 @@ import no.nav.syfo.util.bearerHeader
 import org.slf4j.LoggerFactory
 
 class NarmestelederClient(
-        private val baseUrl: String,
-        private val narmestelederId: String,
-        private val azureAdTokenClient: AzureADTokenClient
+    private val baseUrl: String,
+    private val narmestelederId: String,
+    private val azureAdTokenClient: AzureADTokenClient
 ) {
     fun ansatte(innloggetAktorId: String, callId: String): List<Ansatt>? {
         val bearer = azureAdTokenClient.accessToken(narmestelederId).access_token
@@ -24,21 +24,21 @@ class NarmestelederClient(
         COUNT_CALL_NARMESTELEDER.inc()
 
         val (_, response, result) = getAnsatteUrl(innloggetAktorId).httpGet()
-                .header(mapOf(
-                        "Authorization" to bearerHeader(bearer),
-                        "Accept" to "application/json",
-                        "Nav-Call-Id" to callId,
-                        "Nav-Consumer-Id" to "syfobrukertilgang"
-                ))
-                .responseString()
+            .header(mapOf(
+                "Authorization" to bearerHeader(bearer),
+                "Accept" to "application/json",
+                "Nav-Call-Id" to callId,
+                "Nav-Consumer-Id" to "syfobrukertilgang"
+            ))
+            .responseString()
 
         result.fold(success = {
             COUNT_CALL_NARMESTELEDER_SUCCESS.inc()
             val narmesteLederRelasjonListe = objectMapper.readValue<List<NarmesteLederRelasjon>>(result.get())
             return narmesteLederRelasjonListe.map {
                 Ansatt(
-                        aktorId = it.aktorId,
-                        virksomhetsnummer = it.orgnummer
+                    aktorId = it.aktorId,
+                    virksomhetsnummer = it.orgnummer
                 )
             }
         }, failure = {

@@ -5,8 +5,8 @@ import no.nav.syfo.client.aktor.domain.Fodselsnummer
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 
 class AnsattTilgangService(
-        private val aktorService: AktorService,
-        private val narmestelederClient: NarmestelederClient
+    private val aktorService: AktorService,
+    private val narmestelederClient: NarmestelederClient
 ) {
     fun hasAccessToAnsatt(loggedInFnr: String, ansattFnr: String, callId: String): Boolean {
         val innloggetAktorId = aktorService.aktorForFodselsnummer(Fodselsnummer(loggedInFnr), callId)

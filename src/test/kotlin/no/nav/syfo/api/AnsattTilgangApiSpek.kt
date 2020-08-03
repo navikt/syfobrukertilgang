@@ -55,10 +55,10 @@ object AnsattTilgangApiSpek : Spek({
     val lederAktorId = mockAktorId(LEDER_FNR)
 
     val ansatte = listOf(
-            Ansatt(
-                    aktorId = ansattAktorId,
-                    virksomhetsnummer = ""
-            )
+        Ansatt(
+            aktorId = ansattAktorId,
+            virksomhetsnummer = ""
+        )
     )
 
     beforeEachTest {
@@ -84,9 +84,9 @@ object AnsattTilgangApiSpek : Spek({
             start()
 
             application.installAuthentication(
-                    jwkProvider,
-                    issuerUrl,
-                    acceptedClientId
+                jwkProvider,
+                issuerUrl,
+                acceptedClientId
             )
             application.routing {
                 authenticate("jwt") {
@@ -115,7 +115,7 @@ object AnsattTilgangApiSpek : Spek({
                     it("should return 200 false when not leader of Ansatt") {
                         with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
                             addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
-                                    ?: ""))
+                                ?: ""))
                         }) {
                             response.status() shouldEqual HttpStatusCode.OK
                             response.content shouldEqual false.toString()
@@ -125,7 +125,7 @@ object AnsattTilgangApiSpek : Spek({
                     it("should return 200 true when leader of Ansatt") {
                         with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
                             addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, acceptedClientId)
-                                    ?: ""))
+                                ?: ""))
                         }) {
                             response.status() shouldEqual HttpStatusCode.OK
                             response.content shouldEqual true.toString()
@@ -136,7 +136,7 @@ object AnsattTilgangApiSpek : Spek({
                 it("should return 401 with valid JWT and unaccepted audience") {
                     with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
                         addHeader(HttpHeaders.Authorization, bearerHeader(generateJWT(consumerClientId, notAcceptedClientId)
-                                ?: ""))
+                            ?: ""))
                     }) {
                         response.status() shouldEqual HttpStatusCode.Unauthorized
                         response.content shouldEqual null

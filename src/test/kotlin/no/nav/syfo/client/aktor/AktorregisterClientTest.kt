@@ -26,18 +26,17 @@ import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.net.ServerSocket
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertTrue
 
 data class RSIdent(
-        val ident: String,
-        val identgruppe: String,
-        val gjeldende: Boolean
+    val ident: String,
+    val identgruppe: String,
+    val gjeldende: Boolean
 )
 
 data class RSAktor(
-        val identer: List<RSIdent>? = null,
-        val feilmelding: String? = null
+    val identer: List<RSIdent>? = null,
+    val feilmelding: String? = null
 )
 
 @InternalAPI
@@ -66,22 +65,22 @@ object AktorregisterClientTest : Spek({
                     when (call.request.headers["Nav-Personidenter"]) {
                         ARBEIDSTAKER_FNR -> {
                             call.respond(mapOf(ARBEIDSTAKER_FNR to RSAktor(
-                                    listOf(RSIdent(
-                                            ident = ARBEIDSTAKER_FNR,
-                                            identgruppe = IdentType.NorskIdent.name,
-                                            gjeldende = true
-                                    )),
-                                    feilmelding = null
+                                listOf(RSIdent(
+                                    ident = ARBEIDSTAKER_FNR,
+                                    identgruppe = IdentType.NorskIdent.name,
+                                    gjeldende = true
+                                )),
+                                feilmelding = null
                             )))
                         }
                         ARBEIDSTAKER_AKTORID -> {
                             call.respond(mapOf(ARBEIDSTAKER_AKTORID to RSAktor(
-                                    listOf(RSIdent(
-                                            ident = ARBEIDSTAKER_AKTORID,
-                                            identgruppe = IdentType.AktoerId.name,
-                                            gjeldende = true
-                                    )),
-                                    feilmelding = null
+                                listOf(RSIdent(
+                                    ident = ARBEIDSTAKER_AKTORID,
+                                    identgruppe = IdentType.AktoerId.name,
+                                    gjeldende = true
+                                )),
+                                feilmelding = null
                             )))
                         }
                         else -> error("Something went wrong")
