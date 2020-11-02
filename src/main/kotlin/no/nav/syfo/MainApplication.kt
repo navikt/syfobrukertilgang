@@ -118,9 +118,12 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 
     isProd {
         intercept(ApplicationCallPipeline.Call) {
+            log.info("INTERCEPT")
             if (call.request.uri.contains(Regex("is_alive|is_ready|prometheus"))) {
-                proceed()
-                return@intercept
+                log.info("INTERCEPT: is_alive etc.")
+                return@intercept proceed()
+            } else {
+                log.info("INTERCEPT: /api/...")
             }
         }
     }
