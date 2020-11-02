@@ -22,10 +22,10 @@ spec:
     timeout: 5
   resources:
     limits:
-      cpu: 500m
+      cpu: 1000m
       memory: 1Gi
     requests:
-      cpu: 200m
+      cpu: 500m
       memory: 768Mi
   replicas:
     min: 2
