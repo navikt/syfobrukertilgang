@@ -46,6 +46,8 @@ spec:
       - kvPath: /kv/preprod/fss/syfobrukertilgang/default
         mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
+  envFrom:
+    - configmap: loginservice-idporten
   env:
     - name: KTOR_ENV
       value: production
