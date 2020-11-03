@@ -17,7 +17,7 @@ fun getEnvironment(): Environment {
             getEnvVar("APPLICATION_PORT", "8080").toInt(),
             getEnvVar("APPLICATION_THREADS", "1").toInt(),
             getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
-            getEnvVar("AAD_B2C_DISCOVERY_URL"),
+            getEnvVar("LOGINSERVICE_IDPORTEN_DISCOVERY_URL"),
             getEnvVar("AAD_B2C_CLIENT_ID"),
             getEnvVar("AAD_ACCESSTOKEN_URL"),
             getEnvVar("AKTORREGISTER_V1_URL"),
