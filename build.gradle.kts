@@ -8,7 +8,6 @@ version = "1.0-SNAPSHOT"
 object Versions {
     const val arrowVersion = "0.9.0"
     const val coroutinesVersion = "1.3.7"
-    const val fuelVersion = "1.15.1"
     const val kluentVersion = "1.39"
     const val kotlinSerializationVersion = "0.9.0"
     const val ktorVersion = "1.3.2"
@@ -18,9 +17,6 @@ object Versions {
     const val spekVersion = "2.0.9"
     const val jacksonVersion = "2.9.8"
     const val mockkVersion = "1.10.0"
-    const val orgJsonVersion = "20180813"
-    const val gsonVersion = "2.8.0"
-    const val smCommonVersion = "2019.08.08-03-52-c78281e2409af36f3ef07df4369fa29b0ea81a46"
     const val nimbusdsVersion = "7.5.1"
 }
 
@@ -83,13 +79,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jacksonVersion}")
 
     implementation("io.arrow-kt:arrow-core-data:${Versions.arrowVersion}")
-    implementation("org.json:json:${Versions.orgJsonVersion}")
-    implementation("com.google.code.gson:gson:${Versions.gsonVersion}")
-    implementation("com.github.kittinunf.fuel:fuel:${Versions.fuelVersion}")
-
-    implementation("no.nav.syfo.sm:syfosm-common-networking:${Versions.smCommonVersion}")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:${Versions.smCommonVersion}")
-    implementation("no.nav.syfo.sm:syfosm-common-models:${Versions.smCommonVersion}")
 
     testImplementation("org.amshove.kluent:kluent:${Versions.kluentVersion}")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:${Versions.spekVersion}")
