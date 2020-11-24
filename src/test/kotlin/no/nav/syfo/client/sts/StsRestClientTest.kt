@@ -14,6 +14,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.util.InternalAPI
+import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -67,8 +68,9 @@ object StsRestClientTest : Spek({
 
         describe("OIDC Token") {
             it("should parse a token successfully") {
-                val token: String = stsRestClient.token()
-
+                val token: String = runBlocking {
+                    stsRestClient.token()
+                }
                 token shouldEqual default_token.access_token
             }
         }
