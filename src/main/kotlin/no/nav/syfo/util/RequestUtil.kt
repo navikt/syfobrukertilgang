@@ -11,6 +11,7 @@ fun PipelineContext<out Unit, ApplicationCall>.getCallId(): String {
 }
 fun callIdArgument(callId: String) = StructuredArguments.keyValue("callId", callId)!!
 
+const val APP_CONSUMER_ID = "syfobrukertilgang"
 const val NAV_CONSUMER_ID_HEADER = "Nav-Consumer-Id"
 fun PipelineContext<out Unit, ApplicationCall>.getConsumerId(): String {
     return this.call.request.headers[NAV_CONSUMER_ID_HEADER].toString()
