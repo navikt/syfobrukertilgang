@@ -17,7 +17,6 @@ object Versions {
     const val spekVersion = "2.0.9"
     const val jacksonVersion = "2.9.8"
     const val mockkVersion = "1.10.0"
-    const val smCommonVersion = "2019.08.08-03-52-c78281e2409af36f3ef07df4369fa29b0ea81a46"
     const val nimbusdsVersion = "7.5.1"
 }
 
@@ -80,10 +79,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jacksonVersion}")
 
     implementation("io.arrow-kt:arrow-core-data:${Versions.arrowVersion}")
-
-    implementation("no.nav.syfo.sm:syfosm-common-networking:${Versions.smCommonVersion}")
-    implementation("no.nav.syfo.sm:syfosm-common-rest-sts:${Versions.smCommonVersion}")
-    implementation("no.nav.syfo.sm:syfosm-common-models:${Versions.smCommonVersion}")
 
     testImplementation("org.amshove.kluent:kluent:${Versions.kluentVersion}")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:${Versions.spekVersion}")
