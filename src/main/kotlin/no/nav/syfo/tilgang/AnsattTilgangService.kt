@@ -8,7 +8,7 @@ class AnsattTilgangService(
     private val aktorService: AktorService,
     private val narmestelederClient: NarmestelederClient
 ) {
-    fun hasAccessToAnsatt(loggedInFnr: String, ansattFnr: String, callId: String): Boolean {
+    suspend fun hasAccessToAnsatt(loggedInFnr: String, ansattFnr: String, callId: String): Boolean {
         val innloggetAktorId = aktorService.aktorForFodselsnummer(Fodselsnummer(loggedInFnr), callId)
         val ansattAktorId = aktorService.aktorForFodselsnummer(Fodselsnummer(ansattFnr), callId)
 
