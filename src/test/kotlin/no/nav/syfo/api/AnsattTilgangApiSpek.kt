@@ -104,7 +104,7 @@ object AnsattTilgangApiSpek : Spek({
             application.install(StatusPages) {
                 exception<Throwable> { cause ->
                     call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
-                    log.error("Caught exception", cause)
+                    log.error("Caught exception: ${cause.message}", cause)
                     throw cause
                 }
             }
