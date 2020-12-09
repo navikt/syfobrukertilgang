@@ -1,7 +1,9 @@
 package no.nav.syfo.client.narmesteleder.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDate
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class NarmesteLederRelasjon(
     val aktorId: String,
     val orgnummer: String,
