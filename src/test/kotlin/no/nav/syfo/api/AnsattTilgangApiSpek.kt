@@ -142,6 +142,13 @@ object AnsattTilgangApiSpek : Spek({
                         response.content shouldEqual null
                     }
                 }
+
+                it("should return 401 if credentials are missing") {
+                    with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR))) {
+                        response.status() shouldEqual HttpStatusCode.Unauthorized
+                        response.content shouldEqual null
+                    }
+                }
             }
         }
     }
