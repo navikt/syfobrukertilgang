@@ -22,10 +22,9 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                         ?: throw IllegalArgumentException("Fnr mangler")
 
                 val credentials = call.principal<JWTPrincipal>()
+                val callId = getCallId()
 
                 credentials?.let { creds ->
-                    val callId = getCallId()
-
                     val loggedInFnr = creds.payload.subject
                     if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr, callId)) {
                         call.respond(true)
@@ -34,6 +33,8 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                         call.respond(false)
                     }
                 }
+                log.warn("Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
+                call.respond(HttpStatusCode.BadRequest, "Kan ikke hente tilgang til ansatt: Mangler credentials")
             } catch (e: IllegalArgumentException) {
                 log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}", e.message, callIdArgument(getCallId()), consumerIdArgument(getConsumerId()))
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
