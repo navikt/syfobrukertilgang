@@ -62,6 +62,6 @@ spec:
     - name: SECURITY_TOKEN_SERVICE_REST_URL
       value: "https://security-token-service.nais.preprod.local"
     - name: NARMESTELEDER_URL
-        value: https://narmesteleder.dev.intern.nav.no
+      value: https://narmesteleder.dev.intern.nav.no
     - name: NARMESTELEDER_SCOPE
-        value: api://dev-gcp.teamsykmelding.narmesteleder/.default
+      value: api://dev-gcp.teamsykmelding.narmesteleder/.default
