@@ -40,6 +40,11 @@ spec:
     application:
       enabled: true
       tenant: trygdeetaten.no
+      replyURLs:
+        - "https://syfobrukertilgang.nais.preprod.local/callback"
+      claims:
+        extra:
+          - "NAVident"
   vault:
     enabled: true
     paths:
