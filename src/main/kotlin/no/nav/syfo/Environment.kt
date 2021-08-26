@@ -22,8 +22,8 @@ fun getEnvironment(): Environment {
             getEnvVar("AAD_ACCESSTOKEN_URL"),
             getEnvVar("AKTORREGISTER_V1_URL"),
             getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL"),
-            getEnvVar("SYFONARMESTELEDER_ID"),
-            getEnvVar("SYFONARMESTELEDER_URL", "http//syfonarmesteleder")
+            getEnvVar("NARMESTELEDER_SCOPE"),
+            getEnvVar("NARMESTELEDER_URL")
         )
     }
 }
@@ -39,7 +39,7 @@ data class Environment(
     val aadAccessTokenUrl: String,
     val aktoerregisterV1Url: String,
     val stsRestUrl: String,
-    val narmestelederId: String,
+    val narmestelederScope: String,
     val narmestelederUrl: String
 )
 

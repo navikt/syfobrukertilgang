@@ -6,25 +6,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.*
-import io.ktor.auth.authenticate
-import io.ktor.config.HoconApplicationConfig
+import io.ktor.auth.*
+import io.ktor.config.*
 import io.ktor.features.*
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.request.uri
-import io.ktor.response.respond
-import io.ktor.routing.routing
+import io.ktor.http.*
+import io.ktor.jackson.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import io.ktor.server.engine.*
-import io.ktor.server.netty.Netty
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.server.netty.*
+import io.ktor.util.*
 import no.nav.syfo.api.*
 import no.nav.syfo.application.installAuthentication
-import no.nav.syfo.client.aktor.AktorService
-import no.nav.syfo.client.aktor.AktorregisterClient
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
-import no.nav.syfo.client.sts.StsRestClient
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
 import no.nav.syfo.util.*
@@ -125,10 +121,6 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
         }
     }
 
-    val stsClientRest = StsRestClient(env.stsRestUrl, vaultSecrets.serviceuserUsername, vaultSecrets.serviceuserPassword)
-    val aktorregisterClient = AktorregisterClient(env.aktoerregisterV1Url, stsClientRest)
-    val aktorService = AktorService(aktorregisterClient)
-
     val azureADTokenClient = AzureADTokenClient(
         baseUrl = env.aadAccessTokenUrl,
         clientId = vaultSecrets.clientId,
@@ -136,11 +128,11 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     )
     val narmestelederClient = NarmestelederClient(
         env.narmestelederUrl,
-        env.narmestelederId,
+        env.narmestelederScope,
         azureADTokenClient
     )
 
-    val ansattTilgangService = AnsattTilgangService(aktorService, narmestelederClient)
+    val ansattTilgangService = AnsattTilgangService(narmestelederClient)
 
     routing {
         registerPodApi(state)
@@ -153,7 +145,9 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     state.initialized = true
 }
 
-val Application.envKind get() = environment.config.property("ktor.environment").getString()
+@KtorExperimentalAPI
+val Application.envKind
+    get() = environment.config.property("ktor.environment").getString()
 
 fun Application.isDev(block: () -> Unit) {
     if (envKind == "dev") block()
