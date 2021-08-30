@@ -23,7 +23,10 @@ fun getEnvironment(): Environment {
             getEnvVar("AKTORREGISTER_V1_URL"),
             getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL"),
             getEnvVar("NARMESTELEDER_SCOPE"),
-            getEnvVar("NARMESTELEDER_URL")
+            getEnvVar("NARMESTELEDER_URL"),
+            getEnvVar("AZURE_APP_CLIENT_ID"),
+            getEnvVar("AZURE_APP_CLIENT_SECRET"),
+            getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT")
         )
     }
 }
@@ -40,7 +43,10 @@ data class Environment(
     val aktoerregisterV1Url: String,
     val stsRestUrl: String,
     val narmestelederScope: String,
-    val narmestelederUrl: String
+    val narmestelederUrl: String,
+    val clientId: String,
+    val clientSecret: String,
+    val tokenEndpoint: String
 )
 
 data class VaultSecrets(
