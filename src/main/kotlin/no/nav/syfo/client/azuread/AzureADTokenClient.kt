@@ -51,7 +51,7 @@ class AzureADTokenClient(
                 header(HttpHeaders.ContentType, "APPLICATION_FORM_URLENCODED")
                 body = FormDataContent(Parameters.build {
                     append("client_id", clientId)
-                    append("scope", "scope")
+                    append("scope", scope)
                     append("grant_type", "client_credentials")
                     append("client_secret", clientSecret)
                 })
