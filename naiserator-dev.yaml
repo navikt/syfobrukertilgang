@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: syfobrukertilgang
-  namespace: team-esyfo
+  namespace: teamsykefravr
   labels:
     team: teamsykefravr
 spec:
