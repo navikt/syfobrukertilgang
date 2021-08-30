@@ -36,15 +36,6 @@ spec:
     path: /prometheus
   ingresses:
     - "https://syfobrukertilgang.nais.preprod.local"
-  azure:
-    application:
-      enabled: true
-      tenant: trygdeetaten.no
-      replyURLs:
-        - "https://syfobrukertilgang.nais.preprod.local/callback"
-      claims:
-        extra:
-          - "NAVident"
   vault:
     enabled: true
     paths:

@@ -36,10 +36,6 @@ spec:
     path: /prometheus
   ingresses:
     - "https://syfobrukertilgang.nais.adeo.no"
-  azure:
-    application:
-      enabled: true
-      tenant: nav.no
   vault:
     enabled: true
     paths:

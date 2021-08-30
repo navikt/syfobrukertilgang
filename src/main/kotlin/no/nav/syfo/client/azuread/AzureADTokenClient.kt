@@ -12,11 +12,9 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
-import org.slf4j.LoggerFactory
 import java.net.ProxySelector
 import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
+import java.time.LocalDateTime
 
 class AzureADTokenClient(
     private val baseUrl: String,
@@ -38,52 +36,47 @@ class AzureADTokenClient(
         }
     }
 
-    private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap<String, AzureAdResponse>()
+    private var token: Token = Token(
+        token_type = "not a token",
+        expires_in = 0,
+        ext_expires_in = 0,
+        access_token = "not a token",
+        expires_on = Instant.now(),
+        not_before = "",
+        resource = ""
+    )
+    private var expiry: LocalDateTime = LocalDateTime.now().minusYears(100)
 
-    suspend fun accessToken(scope: String): AzureAdResponse {
-        val omToMinutter = Instant.now().plusSeconds(120L)
-        val azureAdResponse = azureAdTokenMap[scope]
-
-        if (azureAdResponse == null || azureAdResponse.issuedOn!!.plusSeconds(azureAdResponse.expires_in).isBefore(omToMinutter)) {
-            LOG.info(">>>>Henter nytt token fra Azure AD for scope {}", scope)
-
-            val response: HttpResponse = client.post(baseUrl) {
-                header(HttpHeaders.ContentType, "APPLICATION_FORM_URLENCODED")
-                body = FormDataContent(Parameters.build {
-                    append("client_id", clientId)
-                    append("scope", scope)
-                    append("grant_type", "client_credentials")
-                    append("client_secret", clientSecret)
-                })
-                accept(ContentType.Application.Json)
-            }
-            LOG.info(">>>>Response from AD endpoint: $response")
-            return when (response.status) {
-                HttpStatusCode.OK -> {
-                    azureAdTokenMap[scope] = response.receive()
-                    response.receive()
-                }
-                else -> {
-                    LOG.error(">>>>NOT OK Response from AD endpoint: $response")
-                    throw IllegalStateException("Henting av token fra Azure AD feiler med HTTPstatus: ${response.status.value}")
-                }
-            }
+    suspend fun accessToken(resource: String): Token {
+        if (isExpired()) {
+            token = requestAccessToken(resource)
+            expiry = LocalDateTime.now().plusSeconds(token.expires_in).minusSeconds(10)
         }
-        return Objects.requireNonNull<AzureAdResponse>(azureAdTokenMap[scope])
+        return token
     }
 
-    companion object {
-        private val LOG = LoggerFactory.getLogger(AzureADTokenClient::class.java)
+    private fun isExpired(): Boolean = LocalDateTime.now().isAfter(expiry)
+
+    private suspend fun requestAccessToken(resource: String): Token {
+        val response: HttpResponse = client.post(baseUrl) {
+            body = FormDataContent(Parameters.build {
+                append("client_id", clientId)
+                append("client_secret", clientSecret)
+                append("grant_type", "client_credentials")
+                append("scope", resource)
+            })
+            accept(ContentType.Application.Json)
+        }
+        return response.receive()
     }
 }
 
-data class AzureAdResponse(
-    var access_token: String,
-    var token_type: String,
-    var expires_in: Long,
-    var ext_expires_in: String,
-    var expires_on: Instant?,
-    var not_before: String?,
-    var resource: String?,
-    var issuedOn: Instant? = Instant.now()
+data class Token(
+    val access_token: String,
+    val token_type: String,
+    val expires_in: Long,
+    val ext_expires_in: Long,
+    val expires_on: Instant?,
+    val not_before: String?,
+    val resource: String?
 )
