@@ -48,10 +48,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /azuread/data/dev/creds/syfobrukertilgang
-        mountPath: /secrets/azuread/syfobrukertilgang
-      - kvPath: /serviceuser/data/dev/srvsyfobrukertilga
-        mountPath: /secrets/serviceuser
       - kvPath: /serviceuser/data/dev/srvsyfobrukertilga
         mountPath: /var/run/secrets/serviceuser
   webproxy: true
