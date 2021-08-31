@@ -47,7 +47,7 @@ spec:
         mountPath: /secrets/azuread/syfobrukertilgang
       - kvPath: /serviceuser/data/prod/srvsyfobrukertilga
         mountPath: /secrets/serviceuser
-      - kvPath: /kv/prod/fss/syfobrukertilgang/team-esyfo
+      - kvPath: /kv/prod/fss/syfobrukertilgang/default
         mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
   envFrom:

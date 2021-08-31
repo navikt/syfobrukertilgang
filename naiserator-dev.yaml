@@ -48,8 +48,12 @@ spec:
   vault:
     enabled: true
     paths:
+      - kvPath: /azuread/data/dev/creds/syfobrukertilgang
+        mountPath: /secrets/azuread/syfobrukertilgang
       - kvPath: /serviceuser/data/dev/srvsyfobrukertilga
         mountPath: /secrets/serviceuser
+      - kvPath: /kv/preprod/fss/syfobrukertilgang/default
+        mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
   envFrom:
     - configmap: loginservice-idporten
