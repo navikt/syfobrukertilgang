@@ -40,36 +40,57 @@ class AzureADTokenClient(
 
     private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap<String, AzureAdResponse>()
 
-    suspend fun accessToken(scope: String): AzureAdResponse {
+    suspend fun accessToken(scope: String): AzureAdResponse? {
         val omToMinutter = Instant.now().plusSeconds(120L)
         val azureAdResponse = azureAdTokenMap[scope]
 
         if (azureAdResponse == null || azureAdResponse.issuedOn!!.plusSeconds(azureAdResponse.expires_in).isBefore(omToMinutter)) {
             LOG.info(">>>>Henter nytt token fra Azure AD for scope {}", scope)
 
-            val response: HttpResponse = client.post(baseUrl) {
-                headers {
-                    append(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
-                }
-                body = FormDataContent(Parameters.build {
-                    append("client_id", clientId)
-                    append("scope", scope)
-                    append("grant_type", "client_credentials")
-                    append("client_secret", clientSecret)
-                })
-                accept(ContentType.Application.Json)
+            LOG.info(">>>>clientId {}", clientId)
+            LOG.info(">>>>scope {}", scope)
+            LOG.info(">>>>clientSecret {}", clientSecret)
+
+            val formParameters = Parameters.build {
+                append("client_id", clientId)
+                append("client_secret", clientSecret)
+                append("grant_type", "client_credentials")
+                append("scope", scope)
             }
-            LOG.info(">>>>Response from AD endpoint: $response")
+
+            return try {
+                val response: HttpResponse = client.post(baseUrl) {
+                    accept(ContentType.Application.Json)
+                    body = FormDataContent(formParameters)
+                }
+                azureAdTokenMap[scope] = response.receive()
+                LOG.info(">>>>response AAD {}", response)
+                azureAdTokenMap[scope]
+            } catch (e: java.lang.IllegalStateException) {
+                LOG.error(">>>>Exception when accessing aad ")
+                return null
+            }
+
+            /*     val response: HttpResponse = client.post(baseUrl) {
+          accept(ContentType.Application.Json)
+          body = FormDataContent(Parameters.build {
+              append("client_id", clientId)
+              append("scope", scope)
+              append("grant_type", "client_credentials")
+              append("client_secret", clientSecret)
+          })
+      }*/
+/*            LOG.info(">>>>Response from AD endpoint: $response")
             return when (response.status) {
                 HttpStatusCode.OK -> {
                     azureAdTokenMap[scope] = response.receive()
-                    response.receive()
+                    azureAdTokenMap[scope]
                 }
                 else -> {
                     LOG.error(">>>>NOT OK Response from AD endpoint: $response")
                     throw IllegalStateException("Henting av token fra Azure AD feiler med HTTPstatus: ${response.status.value}")
                 }
-            }
+            }*/
         }
         return Objects.requireNonNull<AzureAdResponse>(azureAdTokenMap[scope])
     }
