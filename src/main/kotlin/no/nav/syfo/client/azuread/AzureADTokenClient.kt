@@ -3,6 +3,7 @@ package no.nav.syfo.client.azuread
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.sun.jdi.connect.spi.Connection
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
@@ -48,10 +49,9 @@ class AzureADTokenClient(
             LOG.info(">>>>Henter nytt token fra Azure AD for scope {}", scope)
 
             val response: HttpResponse = client.post(baseUrl) {
-                header(HttpHeaders.ContentType, "application/x-www-form-urlencoded")
-//                headers {
-//                    append(HttpHeaders.ContentType, "application/x-www-form-urlencoded")
-//                }
+                headers {
+                    append(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
+                }
                 body = FormDataContent(Parameters.build {
                     append("client_id", clientId)
                     append("scope", scope)
