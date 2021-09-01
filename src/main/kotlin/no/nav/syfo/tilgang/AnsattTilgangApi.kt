@@ -19,6 +19,7 @@ const val basePath: String = "/api/v1/tilgang/ansatt"
 fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
     route(basePath) {
         get("/{fnr}") {
+            log.warn(">>>>Sjekker tilgang")
             try {
                 val ansattFnr: String = call.parameters["fnr"]?.takeIf { validateFnr(it) }
                     ?: throw IllegalArgumentException("Fnr mangler")
