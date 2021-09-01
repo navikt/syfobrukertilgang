@@ -42,7 +42,7 @@ class NarmestelederClient(
     @KtorExperimentalAPI
     suspend fun ansatte(innloggetFnr: String): List<Ansatt>? {
         val token = azureAdTokenClient.accessToken(narmestelederScope).access_token
-        LOG.error(">>>>Response from NL endpoint: $token")
+        LOG.warn(">>>>Response azureAdTokenClient: $token")
         val url = getAnsatteUrl()
 
         val response: HttpResponse = client.get(url) {
@@ -50,7 +50,7 @@ class NarmestelederClient(
             header("Narmeste-Leder-Fnr", innloggetFnr)
             accept(ContentType.Application.Json)
         }
-        LOG.error(">>>>Response from NL endpoint: $response")
+        LOG.warn(">>>>Response from NL endpoint: $response")
         when (response.status) {
             HttpStatusCode.OK -> {
                 COUNT_CALL_NARMESTELEDER_SUCCESS.inc()
