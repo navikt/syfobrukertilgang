@@ -48,7 +48,7 @@ class AzureADTokenClient(
             LOG.info(">>>>Henter nytt token fra Azure AD for scope {}", scope)
 
             val response: HttpResponse = client.post(baseUrl) {
-                header(HttpHeaders.ContentType, "APPLICATION_FORM_URLENCODED")
+//                header(HttpHeaders.ContentType, "APPLICATION_FORM_URLENCODED")
                 body = FormDataContent(Parameters.build {
                     append("client_id", clientId)
                     append("scope", scope)
