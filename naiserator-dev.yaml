@@ -2,13 +2,13 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: syfobrukertilgang
-  namespace: default
+  namespace: team-esyfo
   labels:
-    team: teamsykefravr
+    team: team-esyfo
 spec:
   image: {{ image }}
   port: 8080
-  team: teamsykefravr
+  team: team-esyfo
   liveness:
     path: /is_alive
     initialDelay: 10
@@ -43,7 +43,7 @@ spec:
         mountPath: /secrets/azuread/syfobrukertilgang
       - kvPath: /serviceuser/data/dev/srvsyfobrukertilga
         mountPath: /secrets/serviceuser
-      - kvPath: /kv/preprod/fss/syfobrukertilgang/default
+      - kvPath: /kv/preprod/fss/syfobrukertilgang/team-esyfo
         mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
   envFrom:
