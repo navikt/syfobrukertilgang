@@ -67,7 +67,7 @@ class AzureADTokenClient(
                 LOG.info(">>>>response AAD {}", response)
                 azureAdTokenMap[scope]
             } catch (e: java.lang.IllegalStateException) {
-                LOG.error(">>>>Exception when accessing aad ")
+                LOG.error(">>>>Exception when accessing aad msg ${e.message}")
                 return null
             }
 
