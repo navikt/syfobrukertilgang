@@ -26,10 +26,10 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
 
                 val credentials = call.principal<JWTPrincipal>()
                 val callId = getCallId()
-                log.warn(">>>>credentials: ${credentials}")
+                log.warn(">>>>credentials: $credentials")
                 credentials?.let { creds ->
                     val loggedInFnr = creds.payload.subject
-                    log.warn(">>>>loggedInFnr: ${loggedInFnr}")
+                    log.warn(">>>>loggedInFnr: $loggedInFnr")
                     if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
                         call.respond(true)
                     } else {
