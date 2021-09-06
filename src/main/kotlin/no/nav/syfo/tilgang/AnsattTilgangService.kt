@@ -10,6 +10,9 @@ class AnsattTilgangService(
     @KtorExperimentalAPI
     suspend fun hasAccessToAnsatt(innloggetFnr: String, ansattFnr: String): Boolean {
         // TODO: Do we need innloggetAktorId?
+        LOG.warn(">>>>Response innloggetFnr: $innloggetFnr")
+        LOG.warn(">>>>Response ansattFnr: $ansattFnr")
+
         val ansatte = narmestelederClient.ansatte(innloggetFnr) ?: emptyList()
         // TODO: Do we need ansattAktorId? : response form NL returns ansatt-fnr, ==>  it.ansattFnr == ansattFnr
         LOG.warn(">>>>Response narmestelederClient: $ansatte")
