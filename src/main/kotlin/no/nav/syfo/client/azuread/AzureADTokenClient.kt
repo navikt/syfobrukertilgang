@@ -11,6 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
@@ -51,46 +52,27 @@ class AzureADTokenClient(
             LOG.info(">>>>scope {}", scope)
             LOG.info(">>>>clientSecret {}", clientSecret)
 
-            val formParameters = Parameters.build {
+            val request = FormDataContent(Parameters.build {
                 append("client_id", clientId)
                 append("client_secret", clientSecret)
                 append("grant_type", "client_credentials")
                 append("scope", scope)
-            }
+            })
 
             return try {
                 val response: HttpResponse = client.post(baseUrl) {
                     accept(ContentType.Application.Json)
-                    body = FormDataContent(formParameters)
+                    header(HttpHeaders.ContentType, APPLICATION_FORM_URLENCODED)
+                    body = request
                 }
                 azureAdTokenMap[scope] = response.receive()
                 LOG.info(">>>>response AAD {}", response)
                 azureAdTokenMap[scope]
             } catch (e: java.lang.IllegalStateException) {
                 LOG.error(">>>>Exception when accessing aad msg ${e.message}")
+                LOG.error(">>>>Exception when accessing aad request $request")
                 return null
             }
-
-            /*     val response: HttpResponse = client.post(baseUrl) {
-          accept(ContentType.Application.Json)
-          body = FormDataContent(Parameters.build {
-              append("client_id", clientId)
-              append("scope", scope)
-              append("grant_type", "client_credentials")
-              append("client_secret", clientSecret)
-          })
-      }*/
-/*            LOG.info(">>>>Response from AD endpoint: $response")
-            return when (response.status) {
-                HttpStatusCode.OK -> {
-                    azureAdTokenMap[scope] = response.receive()
-                    azureAdTokenMap[scope]
-                }
-                else -> {
-                    LOG.error(">>>>NOT OK Response from AD endpoint: $response")
-                    throw IllegalStateException("Henting av token fra Azure AD feiler med HTTPstatus: ${response.status.value}")
-                }
-            }*/
         }
         return Objects.requireNonNull<AzureAdResponse>(azureAdTokenMap[scope])
     }
