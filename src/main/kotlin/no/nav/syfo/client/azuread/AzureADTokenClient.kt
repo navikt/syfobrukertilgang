@@ -44,7 +44,7 @@ class AzureADTokenClient(
 
     private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap<String, AzureAdResponse>()
 
-    suspend fun accessToken(scope: String): AzureAdResponse? {
+    suspend fun accessToken(scope: String): String {
         val omToMinutter = Instant.now().plusSeconds(120L)
         val azureAdResponse = azureAdTokenMap[scope]
 
@@ -64,15 +64,14 @@ class AzureADTokenClient(
                     body = request
                 }
                 azureAdTokenMap[scope] = response.receive()
-                azureAdTokenMap[scope]
-            } catch (e: java.lang.Exception) {
+                azureAdTokenMap[scope]!!.access_token
+            } catch (e: Exception) {
                 LOG.error("Henting av token fra Azure AD feiler med message: ${e.message}")
-                return null
+                throw e
             }
         }
-        return Objects.requireNonNull<AzureAdResponse>(azureAdTokenMap[scope])
+        return azureAdTokenMap[scope]!!.access_token
     }
-
     companion object {
         private val LOG = LoggerFactory.getLogger(AzureADTokenClient::class.java)
     }
