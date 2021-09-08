@@ -62,7 +62,7 @@ class AzureADTokenClient(
             return try {
                 val response: HttpResponse = client.post(baseUrl) {
                     accept(ContentType.Application.Json)
-                    header(HttpHeaders.ContentType, APPLICATION_FORM_URLENCODED)
+//                    header(HttpHeaders.ContentType, APPLICATION_FORM_URLENCODED)
                     body = request
                 }
                 azureAdTokenMap[scope] = response.receive()
