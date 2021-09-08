@@ -11,7 +11,6 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
@@ -62,7 +61,6 @@ class AzureADTokenClient(
             return try {
                 val response: HttpResponse = client.post(baseUrl) {
                     accept(ContentType.Application.Json)
-//                    header(HttpHeaders.ContentType, APPLICATION_FORM_URLENCODED)
                     body = request
                 }
                 azureAdTokenMap[scope] = response.receive()
