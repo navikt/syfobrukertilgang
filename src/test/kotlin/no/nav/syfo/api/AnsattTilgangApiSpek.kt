@@ -49,7 +49,6 @@ object AnsattTilgangApiSpek : Spek({
 
     val ansatte = listOf(
         Ansatt(
-            aktorId = "10$ARBEIDSTAKER_FNR",
             virksomhetsnummer = "",
             fnr = ARBEIDSTAKER_FNR
         )
