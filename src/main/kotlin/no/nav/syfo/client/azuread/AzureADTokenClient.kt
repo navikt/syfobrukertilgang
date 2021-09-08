@@ -3,20 +3,24 @@ package no.nav.syfo.client.azuread
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.features.json.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.accept
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.Parameters
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
 import java.time.Instant
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.set
 
 class AzureADTokenClient(
     private val baseUrl: String,
@@ -45,11 +49,7 @@ class AzureADTokenClient(
         val azureAdResponse = azureAdTokenMap[scope]
 
         if (azureAdResponse == null || azureAdResponse.issuedOn!!.plusSeconds(azureAdResponse.expires_in).isBefore(omToMinutter)) {
-            LOG.info(">>>>Henter nytt token fra Azure AD for scope {}", scope)
-
-            LOG.info(">>>>clientId {}", clientId)
-            LOG.info(">>>>scope {}", scope)
-            LOG.info(">>>>clientSecret {}", clientSecret)
+            LOG.info("Henter nytt token fra Azure AD for scope $scope")
 
             val request = FormDataContent(Parameters.build {
                 append("client_id", clientId)
@@ -64,11 +64,9 @@ class AzureADTokenClient(
                     body = request
                 }
                 azureAdTokenMap[scope] = response.receive()
-                LOG.info(">>>>response AAD {}", response)
                 azureAdTokenMap[scope]
             } catch (e: java.lang.Exception) {
-                LOG.error(">>>>Exception when accessing aad msg ${e.message}")
-                LOG.error(">>>>Exception when accessing aad request $request")
+                LOG.error("Henting av token fra Azure AD feiler med message: ${e.message}")
                 return null
             }
         }

@@ -3,15 +3,20 @@ package no.nav.syfo.client.narmesteleder
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.util.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.HttpTimeout
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.accept
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.domain.Ansatt
 import no.nav.syfo.client.narmesteleder.domain.NarmesteLederRelasjon
@@ -42,7 +47,6 @@ class NarmestelederClient(
     @KtorExperimentalAPI
     suspend fun ansatte(innloggetFnr: String): List<Ansatt>? {
         val token = azureAdTokenClient.accessToken(narmestelederScope)!!.access_token
-        LOG.warn(">>>>Response azureAdTokenClient: $token")
         val url = getAnsatteUrl()
 
         val response: HttpResponse = client.get(url) {
@@ -50,7 +54,6 @@ class NarmestelederClient(
             header("Narmeste-Leder-Fnr", innloggetFnr)
             accept(ContentType.Application.Json)
         }
-        LOG.warn(">>>>Response from NL endpoint: $response")
         when (response.status) {
             HttpStatusCode.OK -> {
                 COUNT_CALL_NARMESTELEDER_SUCCESS.inc()
@@ -64,7 +67,7 @@ class NarmestelederClient(
             }
             else -> {
                 COUNT_CALL_NARMESTELEDER_FAIL.inc()
-                LOG.error(">>>>Error while requesting ansatte from syfonarmesteleder: status=${response.status.value}")
+                LOG.error("Feil ved henting av liste over ansatte fra narmesteleder: status=${response.status.value}")
                 return null
             }
         }

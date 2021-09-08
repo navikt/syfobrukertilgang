@@ -8,5 +8,5 @@
   "stsRestUrl": "http://localhost:8080",
   "aktoerregisterV1Url": "http://localhost:8080",
   "narmestelederScope": "narmesteleder.scope",
-  "narmestelederUrl": "http://syfonarmesteleder"
+  "narmestelederUrl": "http://narmesteleder"
 }

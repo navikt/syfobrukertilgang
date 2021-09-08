@@ -65,6 +65,7 @@ fun main() {
 val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
 
+@KtorExperimentalAPI
 fun Application.init() {
     isDev {
         state.running = true
@@ -149,10 +150,12 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
 val Application.envKind
     get() = environment.config.property("ktor.environment").getString()
 
+@KtorExperimentalAPI
 fun Application.isDev(block: () -> Unit) {
     if (envKind == "dev") block()
 }
 
+@KtorExperimentalAPI
 fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }

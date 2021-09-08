@@ -11,7 +11,7 @@ import no.nav.syfo.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private val log: Logger = LoggerFactory.getLogger("no.nav.syfo")
+private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo")
 
 const val basePath: String = "/api/v1/tilgang/ansatt"
 
@@ -19,29 +19,26 @@ const val basePath: String = "/api/v1/tilgang/ansatt"
 fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
     route(basePath) {
         get("/{fnr}") {
-            log.warn(">>>>Sjekker tilgang")
             try {
                 val ansattFnr: String = call.parameters["fnr"]?.takeIf { validateFnr(it) }
                     ?: throw IllegalArgumentException("Fnr mangler")
 
                 val credentials = call.principal<JWTPrincipal>()
                 val callId = getCallId()
-                log.warn(">>>>credentials: $credentials")
                 credentials?.let { creds ->
                     val loggedInFnr = creds.payload.subject
-                    log.warn(">>>>loggedInFnr: $loggedInFnr")
                     if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
                         call.respond(true)
                     } else {
-                        log.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
+                        LOG.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
                         call.respond(false)
                     }
                 } ?: run {
-                    log.warn("Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
+                    LOG.warn("Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
                     call.respond(HttpStatusCode.Unauthorized, "Kan ikke hente tilgang til ansatt: Mangler credentials")
                 }
             } catch (e: IllegalArgumentException) {
-                log.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}", e.message, callIdArgument(getCallId()), consumerIdArgument(getConsumerId()))
+                LOG.warn("Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}", e.message, callIdArgument(getCallId()), consumerIdArgument(getConsumerId()))
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
             }
         }
