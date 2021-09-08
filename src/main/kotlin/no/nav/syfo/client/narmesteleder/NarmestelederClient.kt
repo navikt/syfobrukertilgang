@@ -57,7 +57,6 @@ class NarmestelederClient(
                 val narmesteLederRelasjonListe = response.receive<List<NarmesteLederRelasjon>>()
                 return narmesteLederRelasjonListe.map {
                     Ansatt(
-                        aktorId = it.aktorId,
                         fnr = it.fnr,
                         virksomhetsnummer = it.orgnummer
                     )

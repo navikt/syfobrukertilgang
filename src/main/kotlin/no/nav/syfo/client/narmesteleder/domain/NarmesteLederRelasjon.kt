@@ -1,9 +1,10 @@
 package no.nav.syfo.client.narmesteleder.domain
 
 import java.time.LocalDate
+import java.util.*
 
 data class NarmesteLederRelasjon(
-    val aktorId: String,
+    val narmesteLederId: UUID,
     val fnr: String,
     val orgnummer: String,
     val narmesteLederFnr: String,

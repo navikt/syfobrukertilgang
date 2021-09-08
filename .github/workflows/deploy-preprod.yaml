@@ -59,3 +59,14 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: naiserator-dev.yaml
+
+      # Notify Slack
+      - name: Unsuccessful deploy notification dev
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: 'Unsuccesful deployment - `dev` :crying_cat_face:'
+          SLACK_MESSAGE: '`${{ github.event.repository.name }}` failed to deploy to dev.'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: commit
+          SLACK_COLOR: ${{ job.status }}
