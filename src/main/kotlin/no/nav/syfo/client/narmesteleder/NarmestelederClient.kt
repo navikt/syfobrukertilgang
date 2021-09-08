@@ -46,7 +46,7 @@ class NarmestelederClient(
 
     @KtorExperimentalAPI
     suspend fun ansatte(innloggetFnr: String): List<Ansatt>? {
-        val token = azureAdTokenClient.accessToken(narmestelederScope)!!.access_token
+        val token = azureAdTokenClient.accessToken(narmestelederScope)
         val url = getAnsatteUrl()
 
         val response: HttpResponse = client.get(url) {
