@@ -11,7 +11,7 @@ data class NarmesteLederRelasjon(
     val narmesteLederTelefonnummer: String?,
     val narmesteLederEpost: String?,
     val aktivFom: LocalDate,
-    val aktivTom: LocalDate,
+    val aktivTom: LocalDate?,
     val arbeidsgiverForskutterer: Boolean?,
     val skrivetilgang: Boolean,
     val tilganger: List<Tilgang>
