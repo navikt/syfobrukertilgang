@@ -35,13 +35,6 @@ val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplication
 
 @KtorExperimentalAPI
 fun main() {
-    val vaultSecrets = VaultSecrets(
-        clientId = getFileAsString("/secrets/azuread/syfobrukertilgang/client_id"),
-        clientSecret = getFileAsString("/secrets/azuread/syfobrukertilgang/client_secret"),
-        serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
-        serviceuserUsername = getFileAsString("/secrets/serviceuser/username")
-    )
-
     val server = embeddedServer(Netty, applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         config = HoconApplicationConfig(ConfigFactory.load())
@@ -52,7 +45,7 @@ fun main() {
 
         module {
             init()
-            serverModule(vaultSecrets)
+            serverModule()
         }
     })
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -77,7 +70,7 @@ fun Application.init() {
 }
 
 @KtorExperimentalAPI
-fun Application.serverModule(vaultSecrets: VaultSecrets) {
+fun Application.serverModule() {
     install(ContentNegotiation) {
         jackson {
             registerKotlinModule()
