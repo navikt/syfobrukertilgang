@@ -13,7 +13,7 @@ API accepts valid tokens issued by AzureAD B2C. Only whitelisted accepted audien
 * Gradle
 * Mockk
 * Spek
-* Vault
+* AzureAD
 
 #### Build
 Run `./gradlew clean shadowJar`

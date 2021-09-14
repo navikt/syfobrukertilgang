@@ -18,8 +18,6 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import org.slf4j.LoggerFactory
 import java.net.ProxySelector
 import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.set
 
 class AzureADTokenClient(
@@ -42,7 +40,7 @@ class AzureADTokenClient(
         }
     }
 
-    private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap<String, AzureAdResponse>()
+    private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap()
 
     suspend fun accessToken(scope: String): String {
         val omToMinutter = Instant.now().plusSeconds(120L)
@@ -72,6 +70,7 @@ class AzureADTokenClient(
         }
         return azureAdTokenMap[scope]!!.access_token
     }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(AzureADTokenClient::class.java)
     }

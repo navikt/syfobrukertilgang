@@ -43,13 +43,6 @@ data class Environment(
     val aadTokenEndpoint: String
 )
 
-data class VaultSecrets(
-    val clientId: String,
-    val clientSecret: String,
-    val serviceuserUsername: String,
-    val serviceuserPassword: String
-)
-
 fun getEnvVar(varName: String, defaultValue: String? = null) =
     System.getenv(varName) ?: defaultValue ?: throw RuntimeException("Missing required variable \"$varName\"")
 
