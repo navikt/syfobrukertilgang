@@ -123,9 +123,9 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     }
 
     val azureADTokenClient = AzureADTokenClient(
-        baseUrl = env.tokenEndpoint,
-        clientId = env.clientId,
-        clientSecret = env.clientSecret
+        baseUrl = env.aadTokenEndpoint,
+        clientId = env.aadClientId,
+        clientSecret = env.aadClientSecret
     )
     val narmestelederClient = NarmestelederClient(
         env.narmestelederUrl,

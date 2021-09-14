@@ -60,12 +60,6 @@ spec:
   env:
     - name: KTOR_ENV
       value: production
-    - name: AAD_ACCESSTOKEN_URL
-      value: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/token
-    - name: AKTORREGISTER_V1_URL
-      value: "https://app-q1.adeo.no/aktoerregister/api/v1"
-    - name: SECURITY_TOKEN_SERVICE_REST_URL
-      value: "https://security-token-service.nais.preprod.local"
     - name: NARMESTELEDER_URL
       value: https://narmesteleder.dev.intern.nav.no
     - name: NARMESTELEDER_SCOPE

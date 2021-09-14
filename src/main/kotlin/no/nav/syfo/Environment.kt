@@ -19,9 +19,6 @@ fun getEnvironment(): Environment {
             getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
             getEnvVar("LOGINSERVICE_IDPORTEN_DISCOVERY_URL"),
             getEnvVar("AAD_B2C_CLIENT_ID"),
-            getEnvVar("AAD_ACCESSTOKEN_URL"),
-            getEnvVar("AKTORREGISTER_V1_URL"),
-            getEnvVar("SECURITY_TOKEN_SERVICE_REST_URL"),
             getEnvVar("NARMESTELEDER_SCOPE"),
             getEnvVar("NARMESTELEDER_URL"),
             getEnvVar("AZURE_APP_CLIENT_ID"),
@@ -39,14 +36,11 @@ data class Environment(
     val applicationName: String,
     val aadb2cDiscoveryUrl: String,
     val aadb2cClientId: String,
-    val aadAccessTokenUrl: String,
-    val aktoerregisterV1Url: String,
-    val stsRestUrl: String,
     val narmestelederScope: String,
     val narmestelederUrl: String,
-    val clientId: String,
-    val clientSecret: String,
-    val tokenEndpoint: String
+    val aadClientId: String,
+    val aadClientSecret: String,
+    val aadTokenEndpoint: String
 )
 
 data class VaultSecrets(
