@@ -6,25 +6,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.*
-import io.ktor.auth.authenticate
-import io.ktor.config.HoconApplicationConfig
+import io.ktor.auth.*
+import io.ktor.config.*
 import io.ktor.features.*
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.request.uri
-import io.ktor.response.respond
-import io.ktor.routing.routing
+import io.ktor.http.*
+import io.ktor.jackson.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import io.ktor.server.engine.*
-import io.ktor.server.netty.Netty
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.server.netty.*
+import io.ktor.util.*
 import no.nav.syfo.api.*
 import no.nav.syfo.application.installAuthentication
-import no.nav.syfo.client.aktor.AktorService
-import no.nav.syfo.client.aktor.AktorregisterClient
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
-import no.nav.syfo.client.sts.StsRestClient
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
 import no.nav.syfo.util.*
@@ -39,13 +35,6 @@ val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplication
 
 @KtorExperimentalAPI
 fun main() {
-    val vaultSecrets = VaultSecrets(
-        clientId = getFileAsString("/secrets/azuread/syfobrukertilgang/client_id"),
-        clientSecret = getFileAsString("/secrets/azuread/syfobrukertilgang/client_secret"),
-        serviceuserPassword = getFileAsString("/secrets/serviceuser/password"),
-        serviceuserUsername = getFileAsString("/secrets/serviceuser/username")
-    )
-
     val server = embeddedServer(Netty, applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         config = HoconApplicationConfig(ConfigFactory.load())
@@ -56,7 +45,7 @@ fun main() {
 
         module {
             init()
-            serverModule(vaultSecrets)
+            serverModule()
         }
     })
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -69,6 +58,7 @@ fun main() {
 val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
 
+@KtorExperimentalAPI
 fun Application.init() {
     isDev {
         state.running = true
@@ -80,7 +70,7 @@ fun Application.init() {
 }
 
 @KtorExperimentalAPI
-fun Application.serverModule(vaultSecrets: VaultSecrets) {
+fun Application.serverModule() {
     install(ContentNegotiation) {
         jackson {
             registerKotlinModule()
@@ -125,22 +115,18 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
         }
     }
 
-    val stsClientRest = StsRestClient(env.stsRestUrl, vaultSecrets.serviceuserUsername, vaultSecrets.serviceuserPassword)
-    val aktorregisterClient = AktorregisterClient(env.aktoerregisterV1Url, stsClientRest)
-    val aktorService = AktorService(aktorregisterClient)
-
     val azureADTokenClient = AzureADTokenClient(
-        baseUrl = env.aadAccessTokenUrl,
-        clientId = vaultSecrets.clientId,
-        clientSecret = vaultSecrets.clientSecret
+        baseUrl = env.aadTokenEndpoint,
+        clientId = env.aadClientId,
+        clientSecret = env.aadClientSecret
     )
     val narmestelederClient = NarmestelederClient(
         env.narmestelederUrl,
-        env.narmestelederId,
+        env.narmestelederScope,
         azureADTokenClient
     )
 
-    val ansattTilgangService = AnsattTilgangService(aktorService, narmestelederClient)
+    val ansattTilgangService = AnsattTilgangService(narmestelederClient)
 
     routing {
         registerPodApi(state)
@@ -153,12 +139,16 @@ fun Application.serverModule(vaultSecrets: VaultSecrets) {
     state.initialized = true
 }
 
-val Application.envKind get() = environment.config.property("ktor.environment").getString()
+@KtorExperimentalAPI
+val Application.envKind
+    get() = environment.config.property("ktor.environment").getString()
 
+@KtorExperimentalAPI
 fun Application.isDev(block: () -> Unit) {
     if (envKind == "dev") block()
 }
 
+@KtorExperimentalAPI
 fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }

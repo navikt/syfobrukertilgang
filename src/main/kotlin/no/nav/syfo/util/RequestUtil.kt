@@ -12,16 +12,8 @@ fun PipelineContext<out Unit, ApplicationCall>.getCallId(): String {
 }
 fun callIdArgument(callId: String) = StructuredArguments.keyValue("callId", callId)!!
 
-const val NAV_PERSONIDENTER = "Nav-Personidenter"
-
-const val APP_CONSUMER_ID = "syfobrukertilgang"
 const val NAV_CONSUMER_ID_HEADER = "Nav-Consumer-Id"
 fun PipelineContext<out Unit, ApplicationCall>.getConsumerId(): String {
     return this.call.request.headers[NAV_CONSUMER_ID_HEADER].toString()
 }
 fun consumerIdArgument(consumerId: String) = StructuredArguments.keyValue("consumerId", consumerId)!!
-
-fun basicHeader(
-    credentialUsername: String,
-    credentialPassword: String
-) = "Basic " + Base64.getEncoder().encodeToString(java.lang.String.format("%s:%s", credentialUsername, credentialPassword).toByteArray())

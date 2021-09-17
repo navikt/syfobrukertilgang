@@ -1,12 +1,9 @@
 {
-    "applicationPort": "8081",
-    "applicationThreads": "1",
-    "applicationName": "syfobrukertilgang",
-    "aadb2cDiscoveryUrl": "https://login.microsoftonline.com/navq.onmicrosoft.com/.well-known/openid-configuration",
-    "aadb2cClientId": "999999",
-    "aadAccessTokenUrl": "http://localhost:8080",
-    "stsRestUrl": "http://localhost:8080",
-    "aktoerregisterV1Url": "http://localhost:8080",
-    "narmestelederId": "888888",
-    "narmestelederUrl": "http://syfonarmesteleder"
+  "applicationPort": "8081",
+  "applicationThreads": "1",
+  "applicationName": "syfobrukertilgang",
+  "aadb2cDiscoveryUrl": "https://login.microsoftonline.com/navq.onmicrosoft.com/.well-known/openid-configuration",
+  "aadb2cClientId": "999999",
+  "narmestelederScope": "narmesteleder.scope",
+  "narmestelederUrl": "http://narmesteleder"
 }

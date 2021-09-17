@@ -78,8 +78,6 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jacksonVersion}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jacksonVersion}")
 
-    implementation("io.arrow-kt:arrow-core-data:${Versions.arrowVersion}")
-
     testImplementation("org.amshove.kluent:kluent:${Versions.kluentVersion}")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:${Versions.spekVersion}")
     testImplementation("io.ktor:ktor-server-test-host:${Versions.ktorVersion}")
