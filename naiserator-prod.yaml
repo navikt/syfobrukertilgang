@@ -43,10 +43,6 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /azuread/data/prod/creds/syfobrukertilgang
-        mountPath: /secrets/azuread/syfobrukertilgang
-      - kvPath: /serviceuser/data/prod/srvsyfobrukertilga
-        mountPath: /secrets/serviceuser
       - kvPath: /kv/prod/fss/syfobrukertilgang/team-esyfo
         mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
