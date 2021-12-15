@@ -6,11 +6,10 @@ group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
 object Versions {
-    const val arrowVersion = "0.9.0"
-    const val coroutinesVersion = "1.3.7"
-    const val kluentVersion = "1.39"
-    const val kotlinSerializationVersion = "0.9.0"
-    const val ktorVersion = "1.3.2"
+    const val coroutinesVersion = "1.5.2"
+    const val kluentVersion = "1.59"
+    const val kotlinSerializationVersion = "0.20.0"
+    const val ktorVersion = "1.6.0"
     const val logbackVersion = "1.2.3"
     const val logstashEncoderVersion = "5.1"
     const val prometheusVersion = "0.8.1"
@@ -25,7 +24,7 @@ tasks.withType<Jar> {
 }
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.6.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
@@ -41,12 +40,6 @@ buildscript {
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven(url = "https://dl.bintray.com/kotlin/ktor")
-    maven(url = "https://dl.bintray.com/spekframework/spek-dev")
-    maven(url = "https://dl.bintray.com/kotlin/kotlinx/")
-    maven(url = "http://packages.confluent.io/maven/")
-    maven(url = "https://oss.sonatype.org/content/groups/staging/")
 }
 
 dependencies {
