@@ -13,6 +13,10 @@ jobs:
       ORG_GRADLE_PROJECT_githubUser: x-access-token
       ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Setup java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.x'
       - name: Checkout code
         uses: actions/checkout@v1
       - uses: actions/cache@v1
@@ -44,7 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish Docker image
         run: |
-          docker build --tag ${IMAGE} .
+          docker build -t ${IMAGE} .
           docker push ${IMAGE}
           echo ${IMAGE}
 
@@ -95,19 +99,3 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: commit
           SLACK_COLOR: ${{ job.status }}
-
-  pling:
-    if: github.ref == 'refs/heads/master'
-    name: Pling!
-    needs: deploy-prod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pling
-        run: |
-          APP=${{ github.event.repository.name }}
-          AUTHOR=${{ github.event.pusher.name }}
-          MESSAGE=$(echo "${{ github.event.head_commit.message }}" | tr -d '\n\r')
-          curl -s -H "Content-Type: application/json" \
-          -X POST \
-          -d '{"app":"'"$APP"'", "author":"'"$AUTHOR"'", "message":"'"$MESSAGE"'"}' \
-          https://syfoping.herokuapp.com/deploy
