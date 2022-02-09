@@ -81,6 +81,13 @@ dependencies {
 
     api("io.ktor:ktor-client-mock:${Versions.ktorVersion}")
     api("io.ktor:ktor-client-mock-jvm:${Versions.ktorVersion}")
+
+    constraints {
+        implementation("org.eclipse.jetty:jetty-io:11.0.2")
+        implementation("io.netty:netty-codec:4.1.73.Final")
+        implementation("net.minidev:json-smart:1.3.2")
+        implementation("com.nimbusds:nimbus-jose-jwt:7.8.1")
+    }
 }
 
 tasks {
