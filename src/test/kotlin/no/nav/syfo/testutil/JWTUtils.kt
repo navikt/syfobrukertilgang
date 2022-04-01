@@ -18,7 +18,7 @@ fun generateJWT(
     consumerClientId: String,
     audience: String,
     expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
-    subject: String = LEDER_FNR,
+    fnr: String = LEDER_FNR,
     issuer: String = "https://sts.issuer.net/myid"
 ): String? {
     val now = Date()
@@ -27,10 +27,10 @@ fun generateJWT(
 
     return JWT.create()
         .withKeyId(key.keyID)
-        .withSubject(subject)
         .withIssuer(issuer)
         .withAudience(audience)
         .withJWTId(UUID.randomUUID().toString())
+        .withClaim("pid", fnr)
         .withClaim("ver", "1.0")
         .withClaim("nonce", "myNonce")
         .withClaim("auth_time", now)

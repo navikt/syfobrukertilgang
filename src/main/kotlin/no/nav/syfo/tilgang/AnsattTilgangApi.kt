@@ -12,6 +12,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo")
+private val PID_CLAIM_NAME = "pid"
 
 const val basePath: String = "/api/v1/tilgang/ansatt"
 
@@ -26,12 +27,18 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                 val credentials = call.principal<JWTPrincipal>()
                 val callId = getCallId()
                 credentials?.let { creds ->
-                    val loggedInFnr = creds.payload.subject
-                    if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
-                        call.respond(true)
+                    val pidClaim = creds.payload.getClaim(PID_CLAIM_NAME)
+                    if (pidClaim.isNull()) {
+                        LOG.warn("Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
+                        call.respond(HttpStatusCode.Unauthorized, "Kan ikke hente tilgang til ansatt: 'pid'-claim mangler i token fra loginservice")
                     } else {
-                        LOG.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
-                        call.respond(false)
+                        val loggedInFnr = pidClaim.asString()
+                        if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
+                            call.respond(true)
+                        } else {
+                            LOG.warn("Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
+                            call.respond(false)
+                        }
                     }
                 } ?: run {
                     LOG.warn("Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}", callIdArgument(callId), consumerIdArgument(getConsumerId()))
