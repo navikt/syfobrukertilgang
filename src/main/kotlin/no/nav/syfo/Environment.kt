@@ -18,7 +18,7 @@ fun getEnvironment(): Environment {
             getEnvVar("APPLICATION_THREADS", "1").toInt(),
             getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
             getEnvVar("LOGINSERVICE_IDPORTEN_DISCOVERY_URL"),
-            getEnvVar("AAD_B2C_CLIENT_ID"),
+            getEnvVar("LOGINSERVICE_IDPORTEN_AUDIENCE"),
             getEnvVar("NARMESTELEDER_SCOPE"),
             getEnvVar("NARMESTELEDER_URL"),
             getEnvVar("AZURE_APP_CLIENT_ID"),
