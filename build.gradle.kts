@@ -16,7 +16,7 @@ object Versions {
     const val spekVersion = "2.0.9"
     const val jacksonVersion = "2.9.8"
     const val mockkVersion = "1.10.0"
-    const val nimbusdsVersion = "7.5.1"
+    const val nimbusdsVersion = "9.22"
 }
 
 tasks.withType<Jar> {

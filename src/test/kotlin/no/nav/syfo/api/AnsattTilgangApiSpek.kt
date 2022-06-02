@@ -52,6 +52,8 @@ object AnsattTilgangApiSpek : Spek({
     val consumerClientId = "1"
     val acceptedClientId = "2"
     val notAcceptedClientId = "4"
+    val jwkProviderTokenx = JwkProviderBuilder(uri).build()
+    val tokenXIssuer = "tokenx-issuer"
 
     val ansatte = listOf(
         Ansatt(
@@ -77,7 +79,9 @@ object AnsattTilgangApiSpek : Spek({
             application.installAuthentication(
                 jwkProvider,
                 issuerUrl,
-                acceptedClientId
+                acceptedClientId,
+                jwkProviderTokenx,
+                tokenXIssuer
             )
             application.routing {
                 authenticate("jwt") {
@@ -104,28 +108,34 @@ object AnsattTilgangApiSpek : Spek({
 
                 describe("with valid JWT and accepted audience") {
                     it("should return 200 false when not leader of Ansatt") {
-                        with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
-                            addHeader(
-                                HttpHeaders.Authorization, bearerHeader(
-                                    generateJWT(consumerClientId, acceptedClientId)
-                                        ?: ""
+                        with(
+                            handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
+                                addHeader(
+                                    HttpHeaders.Authorization,
+                                    bearerHeader(
+                                        generateJWT(consumerClientId, acceptedClientId)
+                                            ?: ""
+                                    )
                                 )
-                            )
-                        }) {
+                            }
+                        ) {
                             response.status() shouldEqual HttpStatusCode.OK
                             response.content shouldEqual false.toString()
                         }
                     }
 
                     it("should return 200 true when leader of Ansatt") {
-                        with(handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
-                            addHeader(
-                                HttpHeaders.Authorization, bearerHeader(
-                                    generateJWT(consumerClientId, acceptedClientId)
-                                        ?: ""
+                        with(
+                            handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
+                                addHeader(
+                                    HttpHeaders.Authorization,
+                                    bearerHeader(
+                                        generateJWT(consumerClientId, acceptedClientId)
+                                            ?: ""
+                                    )
                                 )
-                            )
-                        }) {
+                            }
+                        ) {
                             response.status() shouldEqual HttpStatusCode.OK
                             response.content shouldEqual true.toString()
                         }
@@ -133,14 +143,17 @@ object AnsattTilgangApiSpek : Spek({
                 }
 
                 it("should return 401 with valid JWT and unaccepted audience") {
-                    with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
-                        addHeader(
-                            HttpHeaders.Authorization, bearerHeader(
-                                generateJWT(consumerClientId, notAcceptedClientId)
-                                    ?: ""
+                    with(
+                        handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
+                            addHeader(
+                                HttpHeaders.Authorization,
+                                bearerHeader(
+                                    generateJWT(consumerClientId, notAcceptedClientId)
+                                        ?: ""
+                                )
                             )
-                        )
-                    }) {
+                        }
+                    ) {
                         response.status() shouldEqual HttpStatusCode.Unauthorized
                         response.content shouldEqual null
                     }

@@ -36,6 +36,14 @@ spec:
     path: /prometheus
   ingresses:
     - "https://syfobrukertilgang.nais.adeo.no"
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: syfomotebehov
+          namespace: team-esyfo
+          cluster: prod-fss
   azure:
     application:
       enabled: true
@@ -55,3 +63,5 @@ spec:
       value: https://narmesteleder.intern.nav.no
     - name: NARMESTELEDER_SCOPE
       value: api://prod-gcp.teamsykmelding.narmesteleder/.default
+    - name: SYFOMOTEBEHOV_CLIENT_ID
+      value: prod-fss:team-esyfo:syfomotebehov

@@ -19,12 +19,11 @@ import org.slf4j.LoggerFactory
 
 private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo")
 private val PID_CLAIM_NAME = "pid"
-
-const val basePath: String = "/api/v1/tilgang/ansatt"
+const val basePathV2: String = "/api/v2/tilgang/ansatt"
 
 @KtorExperimentalAPI
-fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
-    route(basePath) {
+fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService) {
+    route(basePathV2) {
         get("/{fnr}") {
             try {
                 val ansattFnr: String =
@@ -34,7 +33,7 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                 val callId = getCallId()
                 credentials?.let { creds ->
                     val pidClaim = creds.payload.getClaim(PID_CLAIM_NAME)
-                    if (pidClaim.isNull()) {
+                    if (pidClaim.isNull) {
                         LOG.warn(
                             "Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}",
                             callIdArgument(callId),
@@ -42,7 +41,7 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                         )
                         call.respond(
                             HttpStatusCode.Unauthorized,
-                            "Kan ikke hente tilgang til ansatt: 'pid'-claim mangler i token fra loginservice"
+                            "Kan ikke hente tilgang til ansatt: 'pid'-claim mangler i token fra id-porten"
                         )
                     } else {
                         val loggedInFnr = pidClaim.asString()
@@ -66,7 +65,7 @@ fun Route.registerAnsattTilgangApi(ansattTilgangService: AnsattTilgangService) {
                     call.respond(HttpStatusCode.Unauthorized, "Kan ikke hente tilgang til ansatt: Mangler credentials")
                 }
             } catch (e: IllegalArgumentException) {
-                LOG.warn(
+                LOG.error(
                     "Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}",
                     e.message,
                     callIdArgument(getCallId()),

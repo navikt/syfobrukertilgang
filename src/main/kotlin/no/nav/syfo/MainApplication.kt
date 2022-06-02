@@ -5,25 +5,41 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.config.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.util.*
-import no.nav.syfo.api.*
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCallPipeline
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.application.log
+import io.ktor.auth.authenticate
+import io.ktor.config.HoconApplicationConfig
+import io.ktor.features.CallId
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
+import io.ktor.request.uri
+import io.ktor.response.respond
+import io.ktor.routing.routing
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.stop
+import io.ktor.server.netty.Netty
+import io.ktor.util.KtorExperimentalAPI
+import no.nav.syfo.api.getWellKnown
+import no.nav.syfo.api.getWellKnownWellKnownTokenX
+import no.nav.syfo.api.registerPodApi
+import no.nav.syfo.api.registerPrometheusApi
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApi
-import no.nav.syfo.util.*
+import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
+import no.nav.syfo.util.NAV_CALL_ID_HEADER
+import no.nav.syfo.util.getCallId
+import no.nav.syfo.util.getConsumerId
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
@@ -35,22 +51,27 @@ val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplication
 
 @KtorExperimentalAPI
 fun main() {
-    val server = embeddedServer(Netty, applicationEngineEnvironment {
-        log = LoggerFactory.getLogger("ktor.application")
-        config = HoconApplicationConfig(ConfigFactory.load())
+    val server = embeddedServer(
+        Netty,
+        applicationEngineEnvironment {
+            log = LoggerFactory.getLogger("ktor.application")
+            config = HoconApplicationConfig(ConfigFactory.load())
 
-        connector {
-            port = env.applicationPort
-        }
+            connector {
+                port = env.applicationPort
+            }
 
-        module {
-            init()
-            serverModule()
+            module {
+                init()
+                serverModule()
+            }
         }
-    })
-    Runtime.getRuntime().addShutdownHook(Thread {
-        server.stop(10, 10, TimeUnit.SECONDS)
-    })
+    )
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            server.stop(10, 10, TimeUnit.SECONDS)
+        }
+    )
 
     server.start(wait = false)
 }
@@ -92,10 +113,19 @@ fun Application.serverModule() {
         .cached(10, 24, TimeUnit.HOURS)
         .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
+    val wellKnownTokenX = getWellKnownWellKnownTokenX(env.tokenXWellKnownUrl)
+
+    val jwkProviderTokenX = JwkProviderBuilder(URL(wellKnownTokenX.jwks_uri))
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
+        .build()
+
     installAuthentication(
         jwkProvider,
         wellKnown.issuer,
-        env.aadb2cClientId
+        env.aadb2cClientId,
+        jwkProviderTokenX,
+        wellKnownTokenX.issuer
     )
 
     install(StatusPages) {
@@ -120,6 +150,7 @@ fun Application.serverModule() {
         clientId = env.aadClientId,
         clientSecret = env.aadClientSecret
     )
+
     val narmestelederClient = NarmestelederClient(
         env.narmestelederUrl,
         env.narmestelederScope,
@@ -133,6 +164,9 @@ fun Application.serverModule() {
         registerPrometheusApi()
         authenticate("jwt") {
             registerAnsattTilgangApi(ansattTilgangService)
+        }
+        authenticate("tokenx") {
+            registerAnsattTilgangApiV2(ansattTilgangService)
         }
     }
 
