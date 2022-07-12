@@ -16,7 +16,7 @@ object Versions {
     const val spekVersion = "2.0.9"
     const val jacksonVersion = "2.9.8"
     const val mockkVersion = "1.10.0"
-    const val nimbusdsVersion = "7.5.1"
+    const val nimbusdsVersion = "9.22"
 }
 
 tasks.withType<Jar> {
@@ -25,9 +25,8 @@ tasks.withType<Jar> {
 
 plugins {
     kotlin("jvm") version "1.6.0"
-    id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 buildscript {

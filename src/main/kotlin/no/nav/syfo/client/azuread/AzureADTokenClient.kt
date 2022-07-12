@@ -49,12 +49,14 @@ class AzureADTokenClient(
         if (azureAdResponse == null || azureAdResponse.issuedOn!!.plusSeconds(azureAdResponse.expires_in).isBefore(omToMinutter)) {
             LOG.info("Henter nytt token fra Azure AD for scope $scope")
 
-            val request = FormDataContent(Parameters.build {
-                append("client_id", clientId)
-                append("client_secret", clientSecret)
-                append("grant_type", "client_credentials")
-                append("scope", scope)
-            })
+            val request = FormDataContent(
+                Parameters.build {
+                    append("client_id", clientId)
+                    append("client_secret", clientSecret)
+                    append("grant_type", "client_credentials")
+                    append("scope", scope)
+                }
+            )
 
             return try {
                 val response: HttpResponse = client.post(baseUrl) {
