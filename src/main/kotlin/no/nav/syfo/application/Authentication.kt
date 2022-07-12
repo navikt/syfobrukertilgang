@@ -49,7 +49,7 @@ fun Application.installAuthentication(
             verifier(jwkProviderTokenX, tokenXIssuer)
             validate { credentials ->
                 when {
-                    hasSyfobbrukertilgangAudience(
+                    hasSyfobrukertilgangAudience(
                         credentials,
                         env.syfobrukertilgangTokenXClientId
                     ) && isNiva4(credentials) -> {
@@ -57,9 +57,10 @@ fun Application.installAuthentication(
                     }
                     else -> {
                         log.warn(
-                            "Auth: Unexpected audience for jwt {}, {}",
+                            "Auth: Unexpected audience for jwt {}, {}, {}",
                             StructuredArguments.keyValue("issuer", credentials.payload.issuer),
-                            StructuredArguments.keyValue("audience", credentials.payload.audience)
+                            StructuredArguments.keyValue("audience", credentials.payload.audience),
+                            StructuredArguments.keyValue("audience", credentials.payload.getClaim("acr").asString()),
                         )
                         null
                     }
@@ -76,7 +77,7 @@ fun ApplicationCall.getToken(): String? {
     return null
 }
 
-fun hasSyfobbrukertilgangAudience(credentials: JWTCredential, clientId: String): Boolean {
+fun hasSyfobrukertilgangAudience(credentials: JWTCredential, clientId: String): Boolean {
     return credentials.payload.audience.contains(clientId)
 }
 
