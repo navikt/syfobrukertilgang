@@ -25,9 +25,8 @@ tasks.withType<Jar> {
 
 plugins {
     kotlin("jvm") version "1.6.0"
-    id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 buildscript {
