@@ -50,8 +50,7 @@ fun Application.installAuthentication(
             validate { credentials ->
                 when {
                     hasSyfobrukertilgangAudience(
-                        credentials,
-                        env.syfobrukertilgangTokenXClientId
+                        credentials, env.syfobrukertilgangTokenXClientId
                     ) && isNiva4(credentials) -> {
                         JWTPrincipal(credentials.payload)
                     }
@@ -60,7 +59,7 @@ fun Application.installAuthentication(
                             "Auth: Unexpected audience for jwt {}, {}, {}",
                             StructuredArguments.keyValue("issuer", credentials.payload.issuer),
                             StructuredArguments.keyValue("audience", credentials.payload.audience),
-                            StructuredArguments.keyValue("audience", credentials.payload.getClaim("acr").asString()),
+                            StructuredArguments.keyValue("acr claim", credentials.payload.getClaim("acr").asString()),
                         )
                         null
                     }
