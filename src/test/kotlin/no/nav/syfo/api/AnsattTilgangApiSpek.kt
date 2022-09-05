@@ -4,21 +4,15 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.authenticate
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.response.respond
-import io.ktor.routing.routing
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.util.InternalAPI
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.jackson.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.server.testing.*
+import io.ktor.util.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.syfo.application.installAuthentication
@@ -29,8 +23,8 @@ import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
 import no.nav.syfo.testutil.generateJWT
 import no.nav.syfo.tilgang.AnsattTilgangService
-import no.nav.syfo.tilgang.basePath
-import no.nav.syfo.tilgang.registerAnsattTilgangApi
+import no.nav.syfo.tilgang.basePathV2
+import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
 import no.nav.syfo.util.bearerHeader
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
@@ -84,8 +78,8 @@ object AnsattTilgangApiSpek : Spek({
                 tokenXIssuer
             )
             application.routing {
-                authenticate("jwt") {
-                    registerAnsattTilgangApi(ansattTilgangService)
+                authenticate("tokenx") {
+                    registerAnsattTilgangApiV2(ansattTilgangService)
                 }
             }
 
@@ -171,5 +165,5 @@ object AnsattTilgangApiSpek : Spek({
 })
 
 fun getEndpointUrl(ansattFnr: String): String {
-    return "$basePath/$ansattFnr"
+    return "$basePathV2/$ansattFnr"
 }
