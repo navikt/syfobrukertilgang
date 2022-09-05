@@ -14,8 +14,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-fun generateJWT(
-    consumerClientId: String,
+fun generateTokenXToken(
     audience: String,
     expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
     fnr: String = LEDER_FNR,
@@ -35,9 +34,9 @@ fun generateJWT(
         .withClaim("nonce", "myNonce")
         .withClaim("auth_time", now)
         .withClaim("nbf", now)
-        .withClaim("azp", consumerClientId)
         .withClaim("iat", now)
         .withClaim("exp", Date.from(expiry?.atZone(ZoneId.systemDefault())?.toInstant()))
+        .withClaim("acr", "Level4")
         .sign(alg)
 }
 

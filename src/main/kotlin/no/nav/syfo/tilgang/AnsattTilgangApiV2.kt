@@ -1,19 +1,12 @@
 package no.nav.syfo.tilgang
 
-import io.ktor.application.call
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.principal
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.route
-import io.ktor.util.KtorExperimentalAPI
-import no.nav.syfo.util.callIdArgument
-import no.nav.syfo.util.consumerIdArgument
-import no.nav.syfo.util.getCallId
-import no.nav.syfo.util.getConsumerId
-import no.nav.syfo.util.validateFnr
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.auth.jwt.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import no.nav.syfo.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -21,7 +14,6 @@ private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo")
 private val PID_CLAIM_NAME = "pid"
 const val basePathV2: String = "/api/v2/tilgang/ansatt"
 
-@KtorExperimentalAPI
 fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService) {
     route(basePathV2) {
         get("/{fnr}") {

@@ -18,20 +18,20 @@ import io.mockk.mockk
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.client.narmesteleder.domain.Ansatt
+import no.nav.syfo.env
 import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
-import no.nav.syfo.testutil.generateJWT
+import no.nav.syfo.testutil.generateTokenXToken
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.basePathV2
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
 import no.nav.syfo.util.bearerHeader
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Paths
 
-@KtorExperimentalAPI
 @InternalAPI
 object AnsattTilgangApiSpek : Spek({
     val narmestelederClientMock = mockk<NarmestelederClient>()
@@ -43,7 +43,6 @@ object AnsattTilgangApiSpek : Spek({
     val path = "src/test/resources/jwkset.json"
     val uri = Paths.get(path).toUri().toURL()
     val jwkProvider = JwkProviderBuilder(uri).build()
-    val consumerClientId = "1"
     val acceptedClientId = "2"
     val notAcceptedClientId = "4"
     val jwkProviderTokenx = JwkProviderBuilder(uri).build()
@@ -107,14 +106,14 @@ object AnsattTilgangApiSpek : Spek({
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
-                                        generateJWT(consumerClientId, acceptedClientId)
+                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, issuer = tokenXIssuer)
                                             ?: ""
                                     )
                                 )
                             }
                         ) {
-                            response.status() shouldEqual HttpStatusCode.OK
-                            response.content shouldEqual false.toString()
+                            response.status() shouldBeEqualTo  HttpStatusCode.OK
+                            response.content shouldBeEqualTo  false.toString()
                         }
                     }
 
@@ -124,14 +123,14 @@ object AnsattTilgangApiSpek : Spek({
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
-                                        generateJWT(consumerClientId, acceptedClientId)
+                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, issuer = tokenXIssuer)
                                             ?: ""
                                     )
                                 )
                             }
                         ) {
-                            response.status() shouldEqual HttpStatusCode.OK
-                            response.content shouldEqual true.toString()
+                            response.status() shouldBeEqualTo HttpStatusCode.OK
+                            response.content shouldBeEqualTo true.toString()
                         }
                     }
                 }
@@ -142,21 +141,21 @@ object AnsattTilgangApiSpek : Spek({
                             addHeader(
                                 HttpHeaders.Authorization,
                                 bearerHeader(
-                                    generateJWT(consumerClientId, notAcceptedClientId)
+                                    generateTokenXToken( notAcceptedClientId)
                                         ?: ""
                                 )
                             )
                         }
                     ) {
-                        response.status() shouldEqual HttpStatusCode.Unauthorized
-                        response.content shouldEqual null
+                        response.status() shouldBeEqualTo HttpStatusCode.Unauthorized
+                        response.content shouldBeEqualTo null
                     }
                 }
 
                 it("should return 401 if credentials are missing") {
                     with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR))) {
-                        response.status() shouldEqual HttpStatusCode.Unauthorized
-                        response.content shouldEqual null
+                        response.status() shouldBeEqualTo HttpStatusCode.Unauthorized
+                        response.content shouldBeEqualTo null
                     }
                 }
             }

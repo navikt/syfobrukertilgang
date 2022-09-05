@@ -5,28 +5,17 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.application.log
-import io.ktor.auth.authenticate
-import io.ktor.config.HoconApplicationConfig
-import io.ktor.features.CallId
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.jackson
-import io.ktor.request.uri
-import io.ktor.response.respond
-import io.ktor.routing.routing
-import io.ktor.server.engine.applicationEngineEnvironment
-import io.ktor.server.engine.connector
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.engine.stop
-import io.ktor.server.netty.Netty
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.config.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.jackson.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import no.nav.syfo.api.getWellKnown
 import no.nav.syfo.api.getWellKnownWellKnownTokenX
 import no.nav.syfo.api.registerPodApi
@@ -49,7 +38,6 @@ data class ApplicationState(var running: Boolean = true, var initialized: Boolea
 
 val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplicationKt")
 
-@KtorExperimentalAPI
 fun main() {
     val server = embeddedServer(
         Netty,
@@ -79,7 +67,6 @@ fun main() {
 val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
 
-@KtorExperimentalAPI
 fun Application.init() {
     isDev {
         state.running = true
@@ -90,7 +77,6 @@ fun Application.init() {
     }
 }
 
-@KtorExperimentalAPI
 fun Application.serverModule() {
     install(ContentNegotiation) {
         jackson {
@@ -173,16 +159,13 @@ fun Application.serverModule() {
     state.initialized = true
 }
 
-@KtorExperimentalAPI
 val Application.envKind
     get() = environment.config.property("ktor.environment").getString()
 
-@KtorExperimentalAPI
 fun Application.isDev(block: () -> Unit) {
     if (envKind == "dev") block()
 }
 
-@KtorExperimentalAPI
 fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }
