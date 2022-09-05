@@ -16,7 +16,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import no.nav.syfo.api.getWellKnown
 import no.nav.syfo.api.getWellKnownWellKnownTokenX
 import no.nav.syfo.api.registerPodApi
 import no.nav.syfo.api.registerPrometheusApi
@@ -24,7 +23,6 @@ import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.tilgang.AnsattTilgangService
-import no.nav.syfo.tilgang.registerAnsattTilgangApi
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
 import no.nav.syfo.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.util.getCallId
@@ -94,11 +92,6 @@ fun Application.serverModule() {
         header(NAV_CALL_ID_HEADER)
     }
 
-    val wellKnown = getWellKnown(env.aadb2cDiscoveryUrl)
-    val jwkProvider = JwkProviderBuilder(URL(wellKnown.jwks_uri))
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
-        .build()
     val wellKnownTokenX = getWellKnownWellKnownTokenX(env.tokenXWellKnownUrl)
 
     val jwkProviderTokenX = JwkProviderBuilder(URL(wellKnownTokenX.jwks_uri))
@@ -107,9 +100,6 @@ fun Application.serverModule() {
         .build()
 
     installAuthentication(
-        jwkProvider,
-        wellKnown.issuer,
-        env.aadb2cClientId,
         jwkProviderTokenX,
         wellKnownTokenX.issuer
     )
@@ -148,9 +138,6 @@ fun Application.serverModule() {
     routing {
         registerPodApi(state)
         registerPrometheusApi()
-        authenticate("jwt") {
-            registerAnsattTilgangApi(ansattTilgangService)
-        }
         authenticate("tokenx") {
             registerAnsattTilgangApiV2(ansattTilgangService)
         }
