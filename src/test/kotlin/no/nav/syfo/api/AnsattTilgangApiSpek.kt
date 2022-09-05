@@ -112,8 +112,8 @@ object AnsattTilgangApiSpek : Spek({
                                 )
                             }
                         ) {
-                            response.status() shouldBeEqualTo  HttpStatusCode.OK
-                            response.content shouldBeEqualTo  false.toString()
+                            response.status() shouldBeEqualTo HttpStatusCode.OK
+                            response.content shouldBeEqualTo false.toString()
                         }
                     }
 
@@ -141,7 +141,7 @@ object AnsattTilgangApiSpek : Spek({
                             addHeader(
                                 HttpHeaders.Authorization,
                                 bearerHeader(
-                                    generateTokenXToken( notAcceptedClientId)
+                                    generateTokenXToken(notAcceptedClientId)
                                         ?: ""
                                 )
                             )
