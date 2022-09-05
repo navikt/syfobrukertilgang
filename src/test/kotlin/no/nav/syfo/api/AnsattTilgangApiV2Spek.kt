@@ -33,7 +33,7 @@ import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Paths
 
 @InternalAPI
-object AnsattTilgangApiSpek : Spek({
+object AnsattTilgangApiV2Spek : Spek({
     val narmestelederClientMock = mockk<NarmestelederClient>()
 
     val ansattTilgangService = AnsattTilgangService(narmestelederClientMock)
