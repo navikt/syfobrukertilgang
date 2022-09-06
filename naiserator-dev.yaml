@@ -69,5 +69,3 @@ spec:
       value: https://narmesteleder.dev.intern.nav.no
     - name: NARMESTELEDER_SCOPE
       value: api://dev-gcp.teamsykmelding.narmesteleder/.default
-    - name: SYFOMOTEBEHOV_CLIENT_ID
-      value: dev-fss:team-esyfo:syfomotebehov

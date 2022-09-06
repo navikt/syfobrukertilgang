@@ -7,7 +7,6 @@
   "aadClientId": "aadClientId",
   "aadClientSecret": "aadClientSecret",
   "aadTokenEndpoint": "aadTokenEndpoint",
-  "syfomotebehovClientId": "syfomotebehovClientId",
   "syfobrukertilgangTokenXClientId": "syfobrukertilgangTokenXClientId",
   "tokenXWellKnownUrl": "tokenXWellKnownUrl"
 }
