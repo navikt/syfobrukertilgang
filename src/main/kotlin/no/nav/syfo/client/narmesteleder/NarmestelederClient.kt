@@ -3,20 +3,14 @@ package no.nav.syfo.client.narmesteleder
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.HttpTimeout
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.accept
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.domain.Ansatt
 import no.nav.syfo.client.narmesteleder.domain.NarmesteLederRelasjon
@@ -30,7 +24,7 @@ class NarmestelederClient(
     private val narmestelederScope: String,
     private val azureAdTokenClient: AzureADTokenClient
 ) {
-    @KtorExperimentalAPI
+
     private val client = HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
@@ -44,7 +38,6 @@ class NarmestelederClient(
         }
     }
 
-    @KtorExperimentalAPI
     suspend fun ansatte(innloggetFnr: String): List<Ansatt>? {
         val token = azureAdTokenClient.accessToken(narmestelederScope)
         val url = getAnsatteUrl()

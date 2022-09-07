@@ -5,5 +5,11 @@
   "aadb2cDiscoveryUrl": "https://login.microsoftonline.com/navq.onmicrosoft.com/.well-known/openid-configuration",
   "aadb2cClientId": "999999",
   "narmestelederScope": "narmesteleder.scope",
-  "narmestelederUrl": "http://narmesteleder"
+  "narmestelederUrl": "http://narmesteleder",
+  "aadClientId": "aadClientId",
+  "aadClientSecret": "aadClientSecret",
+  "aadTokenEndpoint": "aadTokenEndpoint",
+  "syfomotebehovClientId": "syfomotebehovClientId",
+  "syfobrukertilgangTokenXClientId": "syfobrukertilgangTokenXClientId",
+  "tokenXWellKnownUrl": "tokenXWellKnownUrl"
 }
