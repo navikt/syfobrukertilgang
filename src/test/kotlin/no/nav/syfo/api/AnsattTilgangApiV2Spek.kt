@@ -38,12 +38,8 @@ object AnsattTilgangApiV2Spek : Spek({
 
     val ansattTilgangService = AnsattTilgangService(narmestelederClientMock)
 
-    val issuerUrl = "https://sts.issuer.net/myid"
-
     val path = "src/test/resources/jwkset.json"
     val uri = Paths.get(path).toUri().toURL()
-    val jwkProvider = JwkProviderBuilder(uri).build()
-    val acceptedClientId = "2"
     val notAcceptedClientId = "4"
     val jwkProviderTokenx = JwkProviderBuilder(uri).build()
     val tokenXIssuer = "tokenx-issuer"
@@ -70,9 +66,6 @@ object AnsattTilgangApiV2Spek : Spek({
             start()
 
             application.installAuthentication(
-                jwkProvider,
-                issuerUrl,
-                acceptedClientId,
                 jwkProviderTokenx,
                 tokenXIssuer
             )
@@ -106,7 +99,7 @@ object AnsattTilgangApiV2Spek : Spek({
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
-                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, issuer = tokenXIssuer)
+                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
                                             ?: ""
                                     )
                                 )
@@ -123,7 +116,7 @@ object AnsattTilgangApiV2Spek : Spek({
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
-                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, issuer = tokenXIssuer)
+                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
                                             ?: ""
                                     )
                                 )
@@ -141,7 +134,7 @@ object AnsattTilgangApiV2Spek : Spek({
                             addHeader(
                                 HttpHeaders.Authorization,
                                 bearerHeader(
-                                    generateTokenXToken(notAcceptedClientId)
+                                    generateTokenXToken(notAcceptedClientId, tokenXIssuer)
                                         ?: ""
                                 )
                             )

@@ -16,9 +16,9 @@ import java.util.*
 
 fun generateTokenXToken(
     audience: String,
+    issuer: String,
     expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
-    fnr: String = LEDER_FNR,
-    issuer: String = "https://sts.issuer.net/myid"
+    fnr: String = LEDER_FNR
 ): String? {
     val now = Date()
     val key = getDefaultRSAKey()

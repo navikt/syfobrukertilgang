@@ -57,8 +57,6 @@ spec:
       - kvPath: /kv/prod/fss/syfobrukertilgang/team-esyfo
         mountPath: /var/run/secrets/nais.io/vault
   webproxy: true
-  envFrom:
-    - configmap: loginservice-idporten
   env:
     - name: KTOR_ENV
       value: production
@@ -66,5 +64,3 @@ spec:
       value: https://narmesteleder.intern.nav.no
     - name: NARMESTELEDER_SCOPE
       value: api://prod-gcp.teamsykmelding.narmesteleder/.default
-    - name: SYFOMOTEBEHOV_CLIENT_ID
-      value: prod-fss:team-esyfo:syfomotebehov

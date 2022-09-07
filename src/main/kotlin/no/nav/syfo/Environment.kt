@@ -17,14 +17,11 @@ fun getEnvironment(): Environment {
             getEnvVar("APPLICATION_PORT", "8080").toInt(),
             getEnvVar("APPLICATION_THREADS", "1").toInt(),
             getEnvVar("APPLICATION_NAME", "syfobrukertilgang"),
-            getEnvVar("LOGINSERVICE_IDPORTEN_DISCOVERY_URL"),
-            getEnvVar("LOGINSERVICE_IDPORTEN_AUDIENCE"),
             getEnvVar("NARMESTELEDER_SCOPE"),
             getEnvVar("NARMESTELEDER_URL"),
             getEnvVar("AZURE_APP_CLIENT_ID"),
             getEnvVar("AZURE_APP_CLIENT_SECRET"),
             getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
-            getEnvVar("SYFOMOTEBEHOV_CLIENT_ID"),
             getEnvVar("TOKEN_X_CLIENT_ID"),
             getEnvVar("TOKEN_X_WELL_KNOWN_URL")
         )
@@ -37,14 +34,11 @@ data class Environment(
     val applicationPort: Int,
     val applicationThreads: Int,
     val applicationName: String,
-    val aadb2cDiscoveryUrl: String,
-    val aadb2cClientId: String,
     val narmestelederScope: String,
     val narmestelederUrl: String,
     val aadClientId: String,
     val aadClientSecret: String,
     val aadTokenEndpoint: String,
-    val syfomotebehovClientId: String,
     val syfobrukertilgangTokenXClientId: String,
     val tokenXWellKnownUrl: String
 )
