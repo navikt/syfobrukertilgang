@@ -1,31 +1,38 @@
-apiVersion: "nais.io/v1"
-kind: "Alert"
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
 metadata:
   name: syfobrukertilgang-alerts
   namespace: team-esyfo
   labels:
     team: team-esyfo
 spec:
-  receivers:
-    slack:
-      channel: '#esyfo-alarm'
-      prependText: '<!here> | '
-  alerts:
-    - alert: SYFOBRUKERTILGANG IS DOWN!
-      expr: up{app="syfobrukertilgang", job="kubernetes-pods"} == 0
-      for: 5m
-      description: "App {{ $labels.app }} er nede i namespace {{ $labels.kubernetes_namespace }}"
-      action: "Undersøk hvofor {{ $labels.app }} er nede i prod-fss"
-      severity: danger
-    - alert: HIGH RATIO OF HTTP 5XX RESPONSE
-      expr: (100 * (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", status=~"^5\\d\\d", service="syfobrukertilgang"}[5m]))) / (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", service="syfobrukertilgang"}[5m])))) > 2
-      for: 5m
-      description: "App {{ $labels.app }} har en høy andel 500 feil {{ $labels.kubernetes_namespace }}"
-      action: "Sjekk i Grafana eller logger at {{ $labels.backend }} returnerer mange 500-feil"
-      severity: danger
-    - alert: HIGH RATIO OF HTTP 4XX RESPONSE
-      expr: (100 * (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", status=~"^4\\d\\d", service="syfobrukertilgang"}[5m]))) / (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", service="syfobrukertilgang"}[5m])))) > 10
-      for: 5m
-      description: "App {{ $labels.app }} har en høy 400 feil {{ $labels.kubernetes_namespace }}"
-      action: "Sjekk i Grafana eller logger at {{ $labels.backend }} returnerer mange 400-feil"
-      severity: warning
+  groups:
+    - name: syfobrukertilgang-alerts
+      rules:
+        - alert: SYFOBRUKERTILGANG IS DOWN!
+          expr: kube_deployment_status_replicas_available{deployment="syfobrukertilgang"} == 0
+          for: 5m
+          annotations:
+            summary: "App syfobrukertilgang er nede i namespace {{ $labels.namespace }}"
+            action: "Undersøk hvofor syfobrukertilgang er nede i prod-fss"
+          labels:
+            namespace: team-esyfo
+            severity: critical
+        - alert: HIGH RATIO OF HTTP 5XX RESPONSE
+          expr: (100 * (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", status=~"^5\\d\\d", service="syfobrukertilgang"}[5m])) / sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", service="syfobrukertilgang"}[5m])))) > 2
+          for: 5m
+          annotations:
+            summary: "App syfobrukertilgang har en høy andel 500 feil {{ $labels.namespace }}"
+            action: "Sjekk i Grafana eller logger at syfobrukertilgang returnerer mange 500-feil"
+          labels:
+            namespace: team-esyfo
+            severity: warning
+        - alert: HIGH RATIO OF HTTP 4XX RESPONSE
+          expr: (100 * (sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", status=~"^4\\d\\d", service="syfobrukertilgang"}[5m])) / sum by (backend) (rate(nginx_ingress_controller_requests{namespace="team-esyfo", service="syfobrukertilgang"}[5m])))) > 10
+          for: 5m
+          annotations:
+            summary: "App syfobrukertilgang har en høy 400 feil {{ $labels.namespace }}"
+            action: "Sjekk i Grafana eller logger at syfobrukertilgang returnerer mange 400-feil"
+          labels:
+            namespace: team-esyfo
+            severity: warning
