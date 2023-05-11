@@ -17,7 +17,6 @@ API accepts valid tokens issued by Idporten.
 
 #### Build
 Run `./gradlew clean shadowJar`
-
 #### Test
 Run `./gradlew test -i`
 
