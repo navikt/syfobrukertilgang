@@ -13,11 +13,11 @@ spec:
     path: /is_alive
     initialDelay: 10
     timeout: 5
-    periodSeconds: 5
-    failureThreshold: 30
+    periodSeconds: 10
+    failureThreshold: 5
   readiness:
     path: /is_ready
-    initialDelay: 30
+    initialDelay: 10
     periodSeconds: 5
     timeout: 5
   resources:
@@ -35,7 +35,7 @@ spec:
     enabled: true
     path: /prometheus
   ingresses:
-    - "https://syfobrukertilgang.nais.preprod.local"
+    - "https://syfobrukertilgang.intern.dev.nav.no"
   tokenx:
     enabled: true
   accessPolicy:
@@ -47,27 +47,19 @@ spec:
         - application: syfooppfolgingsplanservice
           namespace: team-esyfo
           cluster: dev-fss
-    external:
-      - host: narmesteleder.intern.dev.nav.no
+    outbound:
+      rules:
+        - application: narmesteleder
+          namespace: teamsykefravr
+          cluster: dev-gcp
   azure:
     application:
       enabled: true
       tenant: trygdeetaten.no
-      replyURLs:
-        - "https://syfobrukertilgang.dev.intern.nav.no/oauth2/callback"
-      claims:
-        extra:
-          - "NAVident"
-  vault:
-    enabled: true
-    paths:
-      - kvPath: /kv/preprod/fss/syfobrukertilgang/team-esyfo
-        mountPath: /var/run/secrets/nais.io/vault
-  webproxy: true
   env:
     - name: KTOR_ENV
       value: production
     - name: NARMESTELEDER_URL
-      value: https://narmesteleder.intern.dev.nav.no
+      value: http://narmesteleder.teamsykmelding
     - name: NARMESTELEDER_SCOPE
       value: api://dev-gcp.teamsykmelding.narmesteleder/.default
