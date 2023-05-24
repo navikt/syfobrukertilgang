@@ -2,9 +2,6 @@ name: main
 
 on: push
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-
 jobs:
   build:
     name: Checkout code and create docker tag
