@@ -80,7 +80,7 @@ jobs:
   deploy-prod:
     if: github.ref == 'refs/heads/master'
     name: Deploy to NAIS prod-gcp
-    needs: deploy-dev
+    needs: [deploy-dev, build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
