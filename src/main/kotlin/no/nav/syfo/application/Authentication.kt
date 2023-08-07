@@ -16,7 +16,7 @@ import no.nav.syfo.env
 
 fun Application.installAuthentication(
     jwkProviderTokenX: JwkProvider,
-    tokenXIssuer: String
+    tokenXIssuer: String,
 ) {
     install(Authentication) {
         jwt(name = "tokenx") {
@@ -30,7 +30,8 @@ fun Application.installAuthentication(
             validate { credentials ->
                 when {
                     hasSyfobrukertilgangAudience(
-                        credentials, env.syfobrukertilgangTokenXClientId
+                        credentials,
+                        env.syfobrukertilgangTokenXClientId,
                     ) && isNiva4(credentials) -> {
                         JWTPrincipal(credentials.payload)
                     }
@@ -61,5 +62,5 @@ fun hasSyfobrukertilgangAudience(credentials: JWTCredential, clientId: String): 
 }
 
 fun isNiva4(credentials: JWTCredential): Boolean {
-    return "Level4" == credentials.payload.getClaim("acr").asString()
+    return "Level4" == credentials.payload.getClaim("acr").asString() || "idporten-loa-high" == credentials.payload.getClaim("acr").asString()
 }
