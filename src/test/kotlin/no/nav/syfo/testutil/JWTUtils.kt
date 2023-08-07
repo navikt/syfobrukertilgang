@@ -18,7 +18,7 @@ fun generateTokenXToken(
     audience: String,
     issuer: String,
     expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
-    fnr: String = LEDER_FNR
+    fnr: String = LEDER_FNR,
 ): String? {
     val now = Date()
     val key = getDefaultRSAKey()
@@ -36,7 +36,7 @@ fun generateTokenXToken(
         .withClaim("nbf", now)
         .withClaim("iat", now)
         .withClaim("exp", Date.from(expiry?.atZone(ZoneId.systemDefault())?.toInstant()))
-        .withClaim("acr", "Level4")
+        .withClaim("acr", "idporten-loa-high")
         .sign(alg)
 }
 
