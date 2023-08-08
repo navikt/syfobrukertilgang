@@ -38,32 +38,23 @@ fun main() {
             }
 
             module {
-                init()
+                state.running = true
                 serverModule()
             }
         }
     )
+
     Runtime.getRuntime().addShutdownHook(
         Thread {
             server.stop(SERVER_SHUTDOWN_GRACE_PERIOD, SERVER_SHUTDOWN_TIMEOUT, TimeUnit.SECONDS)
         }
     )
 
-    server.start(wait = false)
+    server.start(wait = true)
 }
 
 val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
-
-fun Application.init() {
-    isDev {
-        state.running = true
-    }
-
-    isProd {
-        state.running = true
-    }
-}
 
 fun Application.serverModule() {
     installContentNegotiation()
