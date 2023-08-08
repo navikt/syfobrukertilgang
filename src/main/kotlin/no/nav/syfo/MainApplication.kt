@@ -23,6 +23,7 @@ import no.nav.syfo.wellknown.getWellKnown
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
+val state: ApplicationState = ApplicationState()
 const val SERVER_SHUTDOWN_GRACE_PERIOD = 10L
 const val SERVER_SHUTDOWN_TIMEOUT = 10L
 
@@ -53,7 +54,6 @@ fun main() {
     server.start(wait = true)
 }
 
-val state: ApplicationState = ApplicationState(running = false, initialized = false)
 val env: Environment = getEnvironment()
 
 fun Application.serverModule() {
@@ -118,4 +118,4 @@ fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }
 
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
+data class ApplicationState(var running: Boolean = false, var initialized: Boolean = false)
