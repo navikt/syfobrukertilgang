@@ -1,21 +1,21 @@
 package no.nav.syfo.tilgang
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import no.nav.syfo.util.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo")
-private val PID_CLAIM_NAME = "pid"
-const val basePathV2: String = "/api/v2/tilgang/ansatt"
+private const val PID_CLAIM_NAME = "pid"
+const val BASE_PATH_V2: String = "/api/v2/tilgang/ansatt"
 
 fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService) {
-    route(basePathV2) {
+    route(BASE_PATH_V2) {
         get("/{fnr}") {
             try {
                 val ansattFnr: String =

@@ -1,40 +1,30 @@
 package no.nav.syfo
 
-import com.auth0.jwk.JwkProviderBuilder
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.typesafe.config.ConfigFactory
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.config.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import no.nav.syfo.api.getWellKnownWellKnownTokenX
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import no.nav.syfo.api.registerPodApi
 import no.nav.syfo.api.registerPrometheusApi
 import no.nav.syfo.application.installAuthentication
+import no.nav.syfo.application.installCallId
+import no.nav.syfo.application.installContentNegotiation
+import no.nav.syfo.application.installStatusPages
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
-import no.nav.syfo.util.NAV_CALL_ID_HEADER
-import no.nav.syfo.util.getCallId
-import no.nav.syfo.util.getConsumerId
+import no.nav.syfo.util.jwkProvider
+import no.nav.syfo.wellknown.getWellKnown
 import org.slf4j.LoggerFactory
-import java.net.URL
-import java.util.*
 import java.util.concurrent.TimeUnit
 
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
-
-val log: org.slf4j.Logger = LoggerFactory.getLogger("no.nav.syfo.MainApplicationKt")
+const val SERVER_SHUTDOWN_GRACE_PERIOD = 10L
+const val SERVER_SHUTDOWN_TIMEOUT = 10L
 
 fun main() {
     val server = embeddedServer(
@@ -55,7 +45,7 @@ fun main() {
     )
     Runtime.getRuntime().addShutdownHook(
         Thread {
-            server.stop(10, 10, TimeUnit.SECONDS)
+            server.stop(SERVER_SHUTDOWN_GRACE_PERIOD, SERVER_SHUTDOWN_TIMEOUT, TimeUnit.SECONDS)
         }
     )
 
@@ -76,41 +66,21 @@ fun Application.init() {
 }
 
 fun Application.serverModule() {
-    install(ContentNegotiation) {
-        jackson {
-            registerKotlinModule()
-            registerModule(JavaTimeModule())
-            configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        }
-    }
+    installContentNegotiation()
+    installCallId()
 
-    install(CallId) {
-        retrieve { it.request.headers["X-Nav-CallId"] }
-        retrieve { it.request.headers[HttpHeaders.XCorrelationId] }
-        generate { UUID.randomUUID().toString() }
-        verify { callId: String -> callId.isNotEmpty() }
-        header(NAV_CALL_ID_HEADER)
-    }
+    val wellKnownTokenX = getWellKnown(
+        wellKnownUrl = env.tokenXWellKnownUrl
+    )
 
-    val wellKnownTokenX = getWellKnownWellKnownTokenX(env.tokenXWellKnownUrl)
-
-    val jwkProviderTokenX = JwkProviderBuilder(URL(wellKnownTokenX.jwks_uri))
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
-        .build()
+    val jwkProviderTokenX = jwkProvider(wellKnownTokenX.jwksUri)
 
     installAuthentication(
         jwkProviderTokenX,
         wellKnownTokenX.issuer
     )
 
-    install(StatusPages) {
-        exception<Throwable> { cause ->
-            call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
-            log.error("Caught exception: ${cause.message}", cause, getCallId(), getConsumerId())
-            throw cause
-        }
-    }
+    installStatusPages()
 
     isProd {
         intercept(ApplicationCallPipeline.Call) {
@@ -156,3 +126,5 @@ fun Application.isDev(block: () -> Unit) {
 fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }
+
+data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)

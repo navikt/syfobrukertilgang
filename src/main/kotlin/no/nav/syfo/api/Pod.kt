@@ -1,10 +1,9 @@
 package no.nav.syfo.api
 
-import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
-import io.ktor.response.respondText
-import io.ktor.routing.Routing
-import io.ktor.routing.get
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import no.nav.syfo.ApplicationState
 
 fun Routing.registerPodApi(

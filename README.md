@@ -12,7 +12,6 @@ API accepts valid tokens issued by Idporten.
 * Ktor
 * Gradle
 * Mockk
-* Spek
 * AzureAD
 
 #### Build
@@ -20,5 +19,3 @@ Run `./gradlew clean shadowJar`
 #### Test
 Run `./gradlew test -i`
 
-#### Lint
-Run `./gradlew --continue ktlintCheck`
