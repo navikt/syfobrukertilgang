@@ -12,10 +12,14 @@ API accepts valid tokens issued by Idporten.
 * Ktor
 * Gradle
 * Mockk
+* Kotest
 * AzureAD
 
 #### Build
 Run `./gradlew clean shadowJar`
+
 #### Test
 Run `./gradlew test -i`
 
+#### Code analysis
+Run `./gradlew detekt`
