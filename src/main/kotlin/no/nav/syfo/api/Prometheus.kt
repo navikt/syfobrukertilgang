@@ -1,10 +1,9 @@
 package no.nav.syfo.api
 
-import io.ktor.application.call
-import io.ktor.http.ContentType
-import io.ktor.response.respondTextWriter
-import io.ktor.routing.Routing
-import io.ktor.routing.get
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports

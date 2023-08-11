@@ -1,18 +1,17 @@
 package no.nav.syfo.application
 
 import com.auth0.jwk.JwkProvider
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.install
-import io.ktor.application.log
-import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.JWTCredential
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
-import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.request.header
+import io.ktor.http.auth.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.request.*
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.env
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+private val LOG: Logger = LoggerFactory.getLogger("no.nav.syfo.application")
 
 fun Application.installAuthentication(
     jwkProviderTokenX: JwkProvider,
@@ -35,8 +34,9 @@ fun Application.installAuthentication(
                     ) && isNiva4(credentials) -> {
                         JWTPrincipal(credentials.payload)
                     }
+
                     else -> {
-                        log.warn(
+                        LOG.warn(
                             "Auth: Unexpected audience for jwt {}, {}, {}",
                             StructuredArguments.keyValue("issuer", credentials.payload.issuer),
                             StructuredArguments.keyValue("audience", credentials.payload.audience),

@@ -1,22 +1,24 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
 object Versions {
-    const val coroutinesVersion = "1.5.2"
-    const val kluentVersion = "1.59"
+    const val coroutinesVersion = "1.7.3"
     const val kotlinSerializationVersion = "0.20.0"
-    const val ktorVersion = "1.6.0"
+    const val ktorVersion = "2.3.2"
     const val logbackVersion = "1.2.3"
     const val logstashEncoderVersion = "5.1"
     const val prometheusVersion = "0.8.1"
-    const val spekVersion = "2.0.9"
-    const val jacksonVersion = "2.9.8"
-    const val mockkVersion = "1.10.0"
-    const val nimbusdsVersion = "9.22"
+    const val jacksonVersion = "2.15.2"
+    const val mockkVersion = "1.13.5"
+    const val kotestVersion = "5.6.2"
+    const val kotestExtensionsVersion = "2.0.0"
+    const val kotlinVersion = "1.9.0"
+    const val javaJwtVersion = "4.4.0"
+    const val nimbusVersion = "9.31"
+    const val detektVersion = "1.23.1"
 }
 
 tasks.withType<Jar> {
@@ -24,9 +26,9 @@ tasks.withType<Jar> {
 }
 
 plugins {
-    kotlin("jvm") version "1.6.0"
-    id("com.github.johnrengelman.shadow") version "4.0.4"
-    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    kotlin("jvm") version "1.9.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
 }
 
 buildscript {
@@ -53,16 +55,17 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:${Versions.prometheusVersion}")
 
     implementation("io.ktor:ktor-server-netty:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-server-content-negotiation:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-server-status-pages:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-server-call-id:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-serialization-jackson:${Versions.ktorVersion}")
     implementation("io.ktor:ktor-client-cio:${Versions.ktorVersion}")
     implementation("io.ktor:ktor-client-apache:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-client-auth-basic-jvm:${Versions.ktorVersion}")
     implementation("io.ktor:ktor-client-logging:${Versions.ktorVersion}")
     implementation("io.ktor:ktor-client-logging-jvm:${Versions.ktorVersion}")
-
-    implementation("io.ktor:ktor-jackson:${Versions.ktorVersion}")
     implementation("io.ktor:ktor-client-jackson:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-auth:${Versions.ktorVersion}")
-    implementation("io.ktor:ktor-auth-jwt:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-core:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktorVersion}")
 
     implementation("ch.qos.logback:logback-classic:${Versions.logbackVersion}")
     implementation("net.logstash.logback:logstash-logback-encoder:${Versions.logstashEncoderVersion}")
@@ -70,13 +73,21 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jacksonVersion}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jacksonVersion}")
 
-    testImplementation("org.amshove.kluent:kluent:${Versions.kluentVersion}")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:${Versions.spekVersion}")
-    testImplementation("io.ktor:ktor-server-test-host:${Versions.ktorVersion}")
+    // Auth
+    implementation("io.ktor:ktor-server-auth:${Versions.ktorVersion}")
+    implementation("io.ktor:ktor-server-auth-jwt:${Versions.ktorVersion}")
+    implementation("com.auth0:java-jwt:${Versions.javaJwtVersion}")
+    implementation("com.nimbusds:nimbus-jose-jwt:${Versions.nimbusVersion}")
+
+    // Testing
+    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test:${Versions.kotlinVersion}")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:${Versions.kotestVersion}")
+    testImplementation("io.kotest:kotest-assertions-core:${Versions.kotestVersion}")
+    testImplementation("io.kotest:kotest-property:${Versions.kotestVersion}")
+    testImplementation("io.kotest.extensions:kotest-assertions-ktor:${Versions.kotestExtensionsVersion}")
     testImplementation("io.mockk:mockk:${Versions.mockkVersion}")
-    testImplementation("com.nimbusds:nimbus-jose-jwt:${Versions.nimbusdsVersion}")
-    testRuntimeOnly("org.spekframework.spek2:spek-runtime-jvm:${Versions.spekVersion}")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:${Versions.spekVersion}")
+    testImplementation("io.ktor:ktor-server-test-host:${Versions.ktorVersion}")
 
     api("io.ktor:ktor-client-mock:${Versions.ktorVersion}")
     api("io.ktor:ktor-client-mock-jvm:${Versions.ktorVersion}")
@@ -85,8 +96,19 @@ dependencies {
         implementation("org.eclipse.jetty:jetty-io:11.0.2")
         implementation("io.netty:netty-codec:4.1.73.Final")
         implementation("net.minidev:json-smart:1.3.2")
-        implementation("com.nimbusds:nimbus-jose-jwt:7.8.1")
     }
+}
+
+detekt {
+    toolVersion = Versions.detektVersion
+    config.setFrom(file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+
+java.toolchain {
+    languageVersion.set(JavaLanguageVersion.of(19))
+    vendor.set(JvmVendorSpec.ADOPTIUM)
 }
 
 tasks {
@@ -101,14 +123,7 @@ tasks {
         }
     }
 
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
-    }
-
     withType<Test> {
-        useJUnitPlatform {
-            includeEngines("spek2")
-        }
-        testLogging.showStandardStreams = true
+        useJUnitPlatform()
     }
 }

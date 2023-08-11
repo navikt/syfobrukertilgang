@@ -1,57 +1,50 @@
 package no.nav.syfo.api
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.features.*
+import io.kotest.assertions.ktor.shouldHaveStatus
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.auth.*
+import io.ktor.server.routing.*
 import io.ktor.server.testing.*
-import io.ktor.util.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.syfo.application.installAuthentication
+import no.nav.syfo.application.installContentNegotiation
+import no.nav.syfo.application.installStatusPages
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.client.narmesteleder.domain.Ansatt
 import no.nav.syfo.env
-import no.nav.syfo.log
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
 import no.nav.syfo.testutil.generateTokenXToken
 import no.nav.syfo.tilgang.AnsattTilgangService
-import no.nav.syfo.tilgang.basePathV2
+import no.nav.syfo.tilgang.BASE_PATH_V2
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
 import no.nav.syfo.util.bearerHeader
-import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import java.nio.file.Paths
+import java.net.URL
+import java.nio.file.Path
 
-@InternalAPI
-object AnsattTilgangApiV2Spek : Spek({
-    val narmestelederClientMock = mockk<NarmestelederClient>()
+class AnsattTilgangApiV2Test : DescribeSpec({
+    val narmestelederClientMock = mockk<NarmestelederClient>(relaxed = true)
 
     val ansattTilgangService = AnsattTilgangService(narmestelederClientMock)
 
-    val path = "src/test/resources/jwkset.json"
-    val uri = Paths.get(path).toUri().toURL()
+    val resource = "src/test/resources/jwkset.json"
+    val url: URL = Path.of(resource).toUri().toURL()
     val notAcceptedClientId = "4"
-    val jwkProviderTokenx = JwkProviderBuilder(uri).build()
+    val jwkProviderTokenx = JwkProviderBuilder(url).build()
     val tokenXIssuer = "tokenx-issuer"
 
-    val ansatte = listOf(
+    val ansatte: List<Ansatt> = listOf(
         Ansatt(
             virksomhetsnummer = "",
             fnr = ARBEIDSTAKER_FNR
         )
     )
 
-    beforeEachTest {
+    beforeSpec {
         coEvery {
             narmestelederClientMock.ansatte(ARBEIDSTAKER_FNR)
         } returns ansatte
@@ -75,20 +68,8 @@ object AnsattTilgangApiV2Spek : Spek({
                 }
             }
 
-            application.install(ContentNegotiation) {
-                jackson {
-                    registerKotlinModule()
-                    registerModule(JavaTimeModule())
-                    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                }
-            }
-            application.install(StatusPages) {
-                exception<Throwable> { cause ->
-                    call.respond(HttpStatusCode.InternalServerError, cause.message ?: "Unknown error")
-                    log.error("Caught exception: ${cause.message}", cause)
-                    throw cause
-                }
-            }
+            application.installContentNegotiation()
+            application.installStatusPages()
 
             describe("Check access to Ansatt") {
 
@@ -105,8 +86,8 @@ object AnsattTilgangApiV2Spek : Spek({
                                 )
                             }
                         ) {
-                            response.status() shouldBeEqualTo HttpStatusCode.OK
-                            response.content shouldBeEqualTo false.toString()
+                            response shouldHaveStatus HttpStatusCode.OK
+                            response.content shouldBe false.toString()
                         }
                     }
 
@@ -122,8 +103,8 @@ object AnsattTilgangApiV2Spek : Spek({
                                 )
                             }
                         ) {
-                            response.status() shouldBeEqualTo HttpStatusCode.OK
-                            response.content shouldBeEqualTo true.toString()
+                            response shouldHaveStatus HttpStatusCode.OK
+                            response.content shouldBe true.toString()
                         }
                     }
                 }
@@ -140,15 +121,15 @@ object AnsattTilgangApiV2Spek : Spek({
                             )
                         }
                     ) {
-                        response.status() shouldBeEqualTo HttpStatusCode.Unauthorized
-                        response.content shouldBeEqualTo null
+                        response shouldHaveStatus HttpStatusCode.Unauthorized
+                        response.content shouldBe null
                     }
                 }
 
                 it("should return 401 if credentials are missing") {
                     with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR))) {
-                        response.status() shouldBeEqualTo HttpStatusCode.Unauthorized
-                        response.content shouldBeEqualTo null
+                        response shouldHaveStatus HttpStatusCode.Unauthorized
+                        response.content shouldBe null
                     }
                 }
             }
@@ -157,5 +138,5 @@ object AnsattTilgangApiV2Spek : Spek({
 })
 
 fun getEndpointUrl(ansattFnr: String): String {
-    return "$basePathV2/$ansattFnr"
+    return "$BASE_PATH_V2/$ansattFnr"
 }
