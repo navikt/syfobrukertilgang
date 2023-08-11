@@ -22,4 +22,6 @@ Run `./gradlew clean shadowJar`
 Run `./gradlew test -i`
 
 #### Code analysis
-Run `./gradlew detekt`
+Run 
+* `./gradlew detekt` or
+* `./gradlew detekt --auto-correct`
