@@ -5,9 +5,11 @@ jobs:
   jar-app:
     uses: navikt/teamesyfo-github-actions-workflows/.github/workflows/jar-app.yaml@main
     permissions:
+      actions: read
       contents: read
-      id-token: write
+      security-events: write
       packages: write
+      id-token: write
     secrets: inherit
     with:
       app: syfobrukertilgang
