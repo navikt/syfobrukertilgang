@@ -42,11 +42,10 @@ spec:
     inbound:
       rules:
         - application: syfomotebehov
-          namespace: team-esyfo
           cluster: prod-fss
         - application: syfooppfolgingsplanservice
-          namespace: team-esyfo
           cluster: prod-fss
+        - application: oppfolgingsplan-backend
     outbound:
       rules:
         - application: narmesteleder
