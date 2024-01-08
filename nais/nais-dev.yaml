@@ -43,6 +43,8 @@ spec:
       rules:
         - application: syfomotebehov
           cluster: dev-fss
+        - application: syfomotebehov
+          cluster: dev-gcp
         - application: syfooppfolgingsplanservice
           cluster: dev-fss
         - application: oppfolgingsplan-backend
