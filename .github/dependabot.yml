@@ -1,35 +1,14 @@
 version: 2
 
-registries:
-  npm-github:
-    type: npm-registry
-    url: https://npm.pkg.github.com
-    token: ${{ secrets.READER_TOKEN }}
-
 updates:
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
       interval: daily
 
-  - package-ecosystem: npm
+  - package-ecosystem: gradle
     directory: '/'
     schedule:
       interval: daily
       time: '14:30'
-      timezone: Europe/Oslo
     open-pull-requests-limit: 20
-    registries: '*'
-    reviewers:
-      - ''
-    groups:
-      aksel-dependencies:
-        patterns:
-          - '@navikt/aksel*'
-          - '@navikt/ds*'
-      react-dependencies:
-        patterns:
-          - 'react'
-          - 'react-dom'
-          - '@types/react'
-          - '@types/react-dom'
