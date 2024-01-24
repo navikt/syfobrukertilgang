@@ -6,7 +6,7 @@ version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.7.3"
 val kotlinSerializationVersion = "0.20.0"
-val ktorVersion = "2.3.2"
+val ktorVersion = "2.3.7"
 val logbackVersion = "1.4.14"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.8.1"
