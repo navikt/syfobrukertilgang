@@ -93,9 +93,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:${Versions.ktorVersion}")
 
     constraints {
-        implementation("org.eclipse.jetty:jetty-io:11.0.2")
         implementation("io.netty:netty-codec:4.1.106.Final")
-        implementation("net.minidev:json-smart:1.3.2")
     }
 }
 
@@ -104,7 +102,6 @@ detekt {
     config.setFrom(file("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
 }
-
 
 java.toolchain {
     languageVersion.set(JavaLanguageVersion.of(19))
