@@ -91,7 +91,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     constraints {
-        implementation("org.eclipse.jetty:jetty-io:11.0.2")
+        implementation("org.eclipse.jetty:jetty-io:12.0.5")
         implementation("io.netty:netty-codec:4.1.106.Final")
         implementation("net.minidev:json-smart:1.3.2")
     }
