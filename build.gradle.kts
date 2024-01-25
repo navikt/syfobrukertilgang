@@ -6,7 +6,7 @@ version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.7.3"
 val kotlinSerializationVersion = "0.20.0"
-val ktorVersion = "2.3.7"
+val ktorVersion = "2.3.2"
 val logbackVersion = "1.4.14"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.16.0"
@@ -16,7 +16,7 @@ val kotestVersion = "5.8.0"
 val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "1.9.22"
 val javaJwtVersion = "4.4.0"
-val nimbusVersion = "9.37.3"
+val nimbusVersion = "9.31"
 val detektVersion = "1.23.1"
 
 tasks.withType<Jar> {
