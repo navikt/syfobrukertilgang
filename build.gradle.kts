@@ -16,7 +16,7 @@ val kotestVersion = "5.8.0"
 val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "1.9.22"
 val javaJwtVersion = "4.4.0"
-val nimbusVersion = "9.37.3"
+val nimbusVersion = "9.31"
 val detektVersion = "1.23.1"
 
 tasks.withType<Jar> {
