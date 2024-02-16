@@ -4,7 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
-val coroutinesVersion = "1.7.3"
+val coroutinesVersion = "1.8.0"
 val kotlinSerializationVersion = "0.20.0"
 val ktorVersion = "2.3.2"
 val logbackVersion = "1.4.14"
