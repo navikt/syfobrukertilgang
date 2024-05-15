@@ -33,6 +33,10 @@ spec:
   prometheus:
     enabled: true
     path: /prometheus
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   ingresses:
     - "https://syfobrukertilgang.intern.nav.no"
   tokenx:
