@@ -72,7 +72,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
             }
         }
 
-        get("/") {
+        get("") {
             try {
                 val ansattFnr: String =
                     getPersonIdent()?.takeIf { validateFnr(it) } ?: throw IllegalArgumentException("Fnr mangler")
