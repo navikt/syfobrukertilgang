@@ -22,6 +22,7 @@ import no.nav.syfo.testutil.generateTokenXToken
 import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.BASE_PATH_V2
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
+import no.nav.syfo.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.util.bearerHeader
 import java.net.URL
 import java.nio.file.Path
@@ -76,13 +77,17 @@ class AnsattTilgangApiV2Test : DescribeSpec({
                 describe("with valid JWT and accepted audience") {
                     it("should return 200 false when not leader of Ansatt") {
                         with(
-                            handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
+                            handleRequest(HttpMethod.Get, BASE_PATH_V2) {
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
                                         generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
                                             ?: ""
                                     )
+                                )
+                                addHeader(
+                                    NAV_PERSONIDENT_HEADER,
+                                    LEDER_FNR
                                 )
                             }
                         ) {
@@ -93,13 +98,17 @@ class AnsattTilgangApiV2Test : DescribeSpec({
 
                     it("should return 200 true when leader of Ansatt") {
                         with(
-                            handleRequest(HttpMethod.Get, getEndpointUrl(ARBEIDSTAKER_FNR)) {
+                            handleRequest(HttpMethod.Get, BASE_PATH_V2) {
                                 addHeader(
                                     HttpHeaders.Authorization,
                                     bearerHeader(
                                         generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
                                             ?: ""
                                     )
+                                )
+                                addHeader(
+                                    NAV_PERSONIDENT_HEADER,
+                                    ARBEIDSTAKER_FNR
                                 )
                             }
                         ) {
@@ -109,15 +118,37 @@ class AnsattTilgangApiV2Test : DescribeSpec({
                     }
                 }
 
+                it("should return 400 with missing personident header") {
+                    with(
+                        handleRequest(HttpMethod.Get, BASE_PATH_V2) {
+                            addHeader(
+                                HttpHeaders.Authorization,
+                                bearerHeader(
+                                    generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
+                                        ?: ""
+                                )
+                            )
+                        }
+                    ) {
+                        response shouldHaveStatus HttpStatusCode.BadRequest
+                        response.content shouldBe "Fnr mangler"
+                    }
+                }
+
+
                 it("should return 401 with valid JWT and unaccepted audience") {
                     with(
-                        handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR)) {
+                        handleRequest(HttpMethod.Get, BASE_PATH_V2) {
                             addHeader(
                                 HttpHeaders.Authorization,
                                 bearerHeader(
                                     generateTokenXToken(notAcceptedClientId, tokenXIssuer)
                                         ?: ""
                                 )
+                            )
+                            addHeader(
+                                NAV_PERSONIDENT_HEADER,
+                                LEDER_FNR
                             )
                         }
                     ) {
@@ -127,7 +158,7 @@ class AnsattTilgangApiV2Test : DescribeSpec({
                 }
 
                 it("should return 401 if credentials are missing") {
-                    with(handleRequest(HttpMethod.Get, getEndpointUrl(LEDER_FNR))) {
+                    with(handleRequest(HttpMethod.Get, BASE_PATH_V2)) {
                         response shouldHaveStatus HttpStatusCode.Unauthorized
                         response.content shouldBe null
                     }
@@ -137,6 +168,3 @@ class AnsattTilgangApiV2Test : DescribeSpec({
     }
 })
 
-fun getEndpointUrl(ansattFnr: String): String {
-    return "$BASE_PATH_V2/$ansattFnr"
-}

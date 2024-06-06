@@ -1,6 +1,7 @@
 package no.nav.syfo.util
 
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.util.pipeline.*
 import net.logstash.logback.argument.StructuredArguments
 
@@ -13,3 +14,10 @@ fun PipelineContext<out Unit, ApplicationCall>.getConsumerId(): String {
     return this.call.request.headers[NAV_CONSUMER_ID_HEADER].toString()
 }
 fun consumerIdArgument(consumerId: String) = StructuredArguments.keyValue("consumerId", consumerId)!!
+
+const val NAV_PERSONIDENT_HEADER = "Nav-Personident"
+
+fun PipelineContext<out Unit, ApplicationCall>.getPersonIdent(): String? {
+    return this.call.request.header(NAV_PERSONIDENT_HEADER)
+}
+
