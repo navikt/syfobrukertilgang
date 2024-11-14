@@ -12,8 +12,6 @@ jobs:
     permissions:
       id-token: write
     runs-on: ubuntu-latest
-    container:
-      image: chainguard/static
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
