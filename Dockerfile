@@ -1,4 +1,6 @@
-FROM ghcr.io/navikt/baseimages/temurin:19
+FROM gcr.io/distroless/java21
+ENV TZ="Europe/Oslo"
+WORKDIR /app
 COPY build/libs/*.jar app.jar
-ENV JAVA_OPTS="-Dlogback.configurationFile=logback-remote.xml"
+ENTRYPOINT ["java", "-jar", "app.jar"]
 LABEL org.opencontainers.image.source=https://github.com/navikt/syfobrukertilgang
