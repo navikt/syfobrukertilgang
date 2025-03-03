@@ -52,9 +52,6 @@ spec:
         - application: narmesteleder
           namespace: teamsykmelding
           cluster: dev-gcp
-        - application: sykmeldinger-arbeidsgiver
-          namespace: teamsykmelding
-          cluster: dev-gcp
   azure:
     application:
       enabled: true
