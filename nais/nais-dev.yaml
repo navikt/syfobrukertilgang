@@ -33,6 +33,14 @@ spec:
   prometheus:
     enabled: true
     path: /prometheus
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   ingresses:
     - "https://syfobrukertilgang.intern.dev.nav.no"
   tokenx:
