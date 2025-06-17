@@ -6,7 +6,7 @@ version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.8.1"
 val kotlinSerializationVersion = "0.20.0"
-val ktorVersion = "2.3.2"
+val ktorVersion = "3.2.0"
 val logbackVersion = "1.5.18"
 val logstashEncoderVersion = "7.4"
 val prometheusVersion = "0.16.0"
@@ -17,7 +17,7 @@ val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "2.1.21"
 val javaJwtVersion = "4.5.0"
 val nimbusVersion = "9.48"
-val detektVersion = "1.23.1"
+val detektVersion = "1.23.8"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
