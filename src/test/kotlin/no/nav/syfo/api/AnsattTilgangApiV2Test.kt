@@ -1,15 +1,21 @@
 package no.nav.syfo.api
 
+import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
-import io.kotest.assertions.ktor.shouldHaveStatus
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.ktor.http.*
-import io.ktor.server.auth.*
-import io.ktor.server.routing.*
-import io.ktor.server.testing.*
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.authenticate
+import io.ktor.server.routing.routing
+import io.ktor.server.testing.ApplicationTestBuilder
+import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.net.URL
+import java.nio.file.Path
 import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.application.installContentNegotiation
 import no.nav.syfo.application.installStatusPages
@@ -23,9 +29,6 @@ import no.nav.syfo.tilgang.AnsattTilgangService
 import no.nav.syfo.tilgang.BASE_PATH_V2
 import no.nav.syfo.tilgang.registerAnsattTilgangApiV2
 import no.nav.syfo.util.NAV_PERSONIDENT_HEADER
-import no.nav.syfo.util.bearerHeader
-import java.net.URL
-import java.nio.file.Path
 
 class AnsattTilgangApiV2Test : DescribeSpec({
     val narmestelederClientMock = mockk<NarmestelederClient>(relaxed = true)
@@ -56,115 +59,99 @@ class AnsattTilgangApiV2Test : DescribeSpec({
     }
 
     describe("AnsattTilgangApi") {
-        with(TestApplicationEngine()) {
-            start()
+        describe("Check access to Ansatt") {
 
-            application.installAuthentication(
-                jwkProviderTokenx,
-                tokenXIssuer
-            )
-            application.routing {
-                authenticate("tokenx") {
-                    registerAnsattTilgangApiV2(ansattTilgangService)
+            describe("with valid JWT and accepted audience") {
+                it("should return 200 false when not leader of Ansatt") {
+                    getTestApplication(ansattTilgangService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {
+                            headers.append(
+                                "Authorization",
+                                generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
+                                    ?: ""
+                            )
+                            headers.append(NAV_PERSONIDENT_HEADER, LEDER_FNR)
+                        }
+                        response shouldHaveStatus HttpStatusCode.OK
+                        response.body<String>() shouldBe false.toString()
+                    }
+                }
+
+                it("should return 200 true when leader of Ansatt") {
+                    getTestApplication(ansattTilgangService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {
+                            headers.append(
+                                "Authorization",
+                                generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
+                                    ?: ""
+                            )
+                            headers.append(NAV_PERSONIDENT_HEADER, ARBEIDSTAKER_FNR)
+                        }
+                        response shouldHaveStatus HttpStatusCode.OK
+                        response.body<String>() shouldBe true.toString()
+                    }
                 }
             }
 
-            application.installContentNegotiation()
-            application.installStatusPages()
-
-            describe("Check access to Ansatt") {
-
-                describe("with valid JWT and accepted audience") {
-                    it("should return 200 false when not leader of Ansatt") {
-                        with(
-                            handleRequest(HttpMethod.Get, BASE_PATH_V2) {
-                                addHeader(
-                                    HttpHeaders.Authorization,
-                                    bearerHeader(
-                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
-                                            ?: ""
-                                    )
-                                )
-                                addHeader(
-                                    NAV_PERSONIDENT_HEADER,
-                                    LEDER_FNR
-                                )
-                            }
-                        ) {
-                            response shouldHaveStatus HttpStatusCode.OK
-                            response.content shouldBe false.toString()
-                        }
-                    }
-
-                    it("should return 200 true when leader of Ansatt") {
-                        with(
-                            handleRequest(HttpMethod.Get, BASE_PATH_V2) {
-                                addHeader(
-                                    HttpHeaders.Authorization,
-                                    bearerHeader(
-                                        generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
-                                            ?: ""
-                                    )
-                                )
-                                addHeader(
-                                    NAV_PERSONIDENT_HEADER,
-                                    ARBEIDSTAKER_FNR
-                                )
-                            }
-                        ) {
-                            response shouldHaveStatus HttpStatusCode.OK
-                            response.content shouldBe true.toString()
-                        }
-                    }
-                }
-
+            describe("with valid JWT and unacceptet personident or audience") {
                 it("should return 400 with missing personident header") {
-                    with(
-                        handleRequest(HttpMethod.Get, BASE_PATH_V2) {
-                            addHeader(
-                                HttpHeaders.Authorization,
-                                bearerHeader(
-                                    generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
-                                        ?: ""
-                                )
+                    getTestApplication(ansattTilgangService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {
+                            headers.append(
+                                "Authorization",
+                                generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
+                                    ?: ""
                             )
                         }
-                    ) {
                         response shouldHaveStatus HttpStatusCode.BadRequest
-                        response.content shouldBe "Fnr mangler"
+                        response.body<String>() shouldBe "Fnr mangler"
                     }
                 }
 
 
                 it("should return 401 with valid JWT and unaccepted audience") {
-                    with(
-                        handleRequest(HttpMethod.Get, BASE_PATH_V2) {
-                            addHeader(
-                                HttpHeaders.Authorization,
-                                bearerHeader(
-                                    generateTokenXToken(notAcceptedClientId, tokenXIssuer)
-                                        ?: ""
-                                )
+                    getTestApplication(ansattTilgangService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {
+                            headers.append(
+                                "Authorization", generateTokenXToken(notAcceptedClientId, tokenXIssuer)
+                                    ?: ""
                             )
-                            addHeader(
-                                NAV_PERSONIDENT_HEADER,
-                                LEDER_FNR
-                            )
+                            headers.append(NAV_PERSONIDENT_HEADER, LEDER_FNR)
                         }
-                    ) {
                         response shouldHaveStatus HttpStatusCode.Unauthorized
-                        response.content shouldBe null
                     }
                 }
 
                 it("should return 401 if credentials are missing") {
-                    with(handleRequest(HttpMethod.Get, BASE_PATH_V2)) {
+                    getTestApplication(ansattTilgangService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {}
                         response shouldHaveStatus HttpStatusCode.Unauthorized
-                        response.content shouldBe null
                     }
                 }
             }
         }
     }
 })
+
+private fun getTestApplication(
+    ansattTilgangService: AnsattTilgangService,
+    jwkProviderTokenx: JwkProvider,
+    fn: suspend ApplicationTestBuilder.() -> Unit
+) {
+    testApplication {
+        application {
+            installContentNegotiation()
+            installStatusPages()
+            installAuthentication(
+                jwkProviderTokenx, "tokenx-issuer"
+            )
+            routing {
+                authenticate("tokenx") {
+                    registerAnsattTilgangApiV2(ansattTilgangService)
+                }
+            }
+        }
+        fn(this)
+    }
+}
 
