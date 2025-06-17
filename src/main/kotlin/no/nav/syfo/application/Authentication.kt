@@ -62,5 +62,6 @@ fun hasSyfobrukertilgangAudience(credentials: JWTCredential, clientId: String): 
 }
 
 fun isNiva4(credentials: JWTCredential): Boolean {
-    return "Level4" == credentials.payload.getClaim("acr").asString() || "idporten-loa-high" == credentials.payload.getClaim("acr").asString()
+    return "Level4" == credentials.payload.getClaim("acr")
+        .asString() || "idporten-loa-high" == credentials.payload.getClaim("acr").asString()
 }
