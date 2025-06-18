@@ -29,19 +29,20 @@ const val SERVER_SHUTDOWN_TIMEOUT = 10L
 
 fun main() {
     val server = embeddedServer(
-        Netty,
-        applicationEngineEnvironment {
+        factory = Netty,
+        environment = applicationEnvironment {
             log = LoggerFactory.getLogger("ktor.application")
             config = HoconApplicationConfig(ConfigFactory.load())
-
+        },
+        configure = {
             connector {
                 port = env.applicationPort
             }
 
-            module {
-                state.running = true
-                serverModule()
-            }
+        },
+        module = {
+            state.running = true
+            serverModule()
         }
     )
 

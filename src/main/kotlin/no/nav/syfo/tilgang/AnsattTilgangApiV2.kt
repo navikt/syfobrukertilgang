@@ -27,7 +27,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                     getPersonIdent()?.takeIf { validateFnr(it) } ?: throw IllegalArgumentException("Fnr mangler")
 
                 val credentials = call.principal<JWTPrincipal>()
-                val callId = getCallId()
+                val callId = call.getCallId()
                 credentials?.let { creds ->
                     val pidClaim = creds.payload.getClaim(PID_CLAIM_NAME)
                     if (pidClaim.isNull) {
@@ -65,7 +65,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                 LOG.error(
                     "Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}",
                     e.message,
-                    callIdArgument(getCallId()),
+                    callIdArgument(call.getCallId()),
                     consumerIdArgument(getConsumerId())
                 )
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
