@@ -20,4 +20,4 @@ jobs:
     secrets: inherit
     with:
       app: syfobrukertilgang
-      java-version: '19'
+      java-version: '21'
