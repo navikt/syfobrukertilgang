@@ -83,7 +83,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     constraints {
-        implementation("io.netty:netty-codec:4.2.3.Final")
+        implementation("io.netty:netty-codec:4.2.4.Final")
     }
 }
 
