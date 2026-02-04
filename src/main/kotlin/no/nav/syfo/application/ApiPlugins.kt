@@ -8,6 +8,7 @@ import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
+import no.nav.syfo.exception.DependencyUnavailableException
 import no.nav.syfo.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.util.configure
 import no.nav.syfo.util.getCallId
@@ -37,11 +38,14 @@ fun Application.installStatusPages() {
             val consumerClientId = call.getConsumerClientId()
             val logExceptionMessage = "Caught exception, callId=$callId, consumerClientId=$consumerClientId"
             val log = call.application.log
-            log.error(logExceptionMessage, cause)
 
             var isUnexpectedException = false
 
             val responseStatus: HttpStatusCode = when (cause) {
+                is DependencyUnavailableException -> {
+                    HttpStatusCode.ServiceUnavailable
+                }
+
                 is ResponseException -> {
                     cause.response.status
                 }
@@ -54,6 +58,11 @@ fun Application.installStatusPages() {
                     isUnexpectedException = true
                     HttpStatusCode.InternalServerError
                 }
+            }
+            when {
+                isUnexpectedException -> log.error(logExceptionMessage, cause)
+                responseStatus.value >= 500 -> log.warn(logExceptionMessage)
+                else -> log.debug(logExceptionMessage)
             }
             val message = if (isUnexpectedException) {
                 "The server reported an unexpected error and cannot complete the request."

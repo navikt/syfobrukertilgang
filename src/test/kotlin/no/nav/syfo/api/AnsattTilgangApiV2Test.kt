@@ -21,6 +21,7 @@ import no.nav.syfo.application.installContentNegotiation
 import no.nav.syfo.application.installStatusPages
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.client.narmesteleder.domain.Ansatt
+import no.nav.syfo.exception.DependencyUnavailableException
 import no.nav.syfo.env
 import no.nav.syfo.testutil.UserConstants.ARBEIDSTAKER_FNR
 import no.nav.syfo.testutil.UserConstants.LEDER_FNR
@@ -50,11 +51,11 @@ class AnsattTilgangApiV2Test : DescribeSpec({
 
     beforeSpec {
         coEvery {
-            narmestelederClientMock.ansatte(ARBEIDSTAKER_FNR)
+            narmestelederClientMock.ansatte(ARBEIDSTAKER_FNR, any(), any())
         } returns ansatte
 
         coEvery {
-            narmestelederClientMock.ansatte(LEDER_FNR)
+            narmestelederClientMock.ansatte(LEDER_FNR, any(), any())
         } returns ansatte
     }
 
@@ -89,6 +90,26 @@ class AnsattTilgangApiV2Test : DescribeSpec({
                         }
                         response shouldHaveStatus HttpStatusCode.OK
                         response.body<String>() shouldBe true.toString()
+                    }
+                }
+
+                it("should return 503 when dependency fails") {
+                    val failingClient = mockk<NarmestelederClient>()
+                    val failingService = AnsattTilgangService(failingClient)
+                    coEvery {
+                        failingClient.ansatte(LEDER_FNR, any(), any())
+                    } throws DependencyUnavailableException("down")
+
+                    getTestApplication(failingService, jwkProviderTokenx) {
+                        val response = client.get(BASE_PATH_V2) {
+                            headers.append(
+                                "Authorization",
+                                generateTokenXToken(env.syfobrukertilgangTokenXClientId, tokenXIssuer)
+                                    ?: ""
+                            )
+                            headers.append(NAV_PERSONIDENT_HEADER, LEDER_FNR)
+                        }
+                        response shouldHaveStatus HttpStatusCode.ServiceUnavailable
                     }
                 }
             }
@@ -154,4 +175,3 @@ private fun getTestApplication(
         fn(this)
     }
 }
-

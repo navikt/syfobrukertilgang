@@ -28,6 +28,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
 
                 val credentials = call.principal<JWTPrincipal>()
                 val callId = call.getCallId()
+                val consumerId = getConsumerId().takeIf { it != "null" }
                 credentials?.let { creds ->
                     val pidClaim = creds.payload.getClaim(PID_CLAIM_NAME)
                     if (pidClaim.isNull) {
@@ -42,7 +43,13 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                         )
                     } else {
                         val loggedInFnr = pidClaim.asString()
-                        if (ansattTilgangService.hasAccessToAnsatt(loggedInFnr, ansattFnr)) {
+                        if (ansattTilgangService.hasAccessToAnsatt(
+                                loggedInFnr,
+                                ansattFnr,
+                                callId,
+                                consumerId
+                            )
+                        ) {
                             call.respond(true)
                         } else {
                             LOG.warn(

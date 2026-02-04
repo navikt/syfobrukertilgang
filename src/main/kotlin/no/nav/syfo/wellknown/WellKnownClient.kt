@@ -8,7 +8,5 @@ import no.nav.syfo.client.httpClientProxy
 fun getWellKnown(
     wellKnownUrl: String,
 ): WellKnown = runBlocking {
-    httpClientProxy().use { client ->
-        client.get(wellKnownUrl).body<WellKnownDTO>().toWellKnown()
-    }
+    httpClientProxy().get(wellKnownUrl).body<WellKnownDTO>().toWellKnown()
 }

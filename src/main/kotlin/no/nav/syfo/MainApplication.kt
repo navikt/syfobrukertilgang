@@ -14,6 +14,8 @@ import no.nav.syfo.application.installAuthentication
 import no.nav.syfo.application.installCallId
 import no.nav.syfo.application.installContentNegotiation
 import no.nav.syfo.application.installStatusPages
+import no.nav.syfo.client.httpClientDefault
+import no.nav.syfo.client.httpClientProxy
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.narmesteleder.NarmestelederClient
 import no.nav.syfo.tilgang.AnsattTilgangService
@@ -84,12 +86,14 @@ fun Application.serverModule() {
     }
 
     val azureADTokenClient = AzureADTokenClient(
+        httpClient = httpClientProxy(),
         baseUrl = env.aadTokenEndpoint,
         clientId = env.aadClientId,
         clientSecret = env.aadClientSecret
     )
 
     val narmestelederClient = NarmestelederClient(
+        httpClient = httpClientDefault(),
         env.narmestelederUrl,
         env.narmestelederScope,
         azureADTokenClient

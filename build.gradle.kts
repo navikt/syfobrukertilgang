@@ -18,6 +18,7 @@ val kotlinVersion = "2.2.21"
 val javaJwtVersion = "4.5.0"
 val nimbusVersion = "9.48"
 val detektVersion = "1.23.8"
+val caffeineVersion = "3.1.8"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
@@ -68,6 +69,9 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("com.auth0:java-jwt:$javaJwtVersion")
     implementation("com.nimbusds:nimbus-jose-jwt:$nimbusVersion")
+
+    // Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
     // Testing
     testImplementation(kotlin("test"))
