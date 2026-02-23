@@ -15,7 +15,7 @@ val mockkVersion = "1.14.9"
 val kotestVersion = "6.1.3"
 val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "2.3.10"
-val javaJwtVersion = "4.5.0"
+val javaJwtVersion = "4.5.1"
 val nimbusVersion = "9.48"
 val detektVersion = "1.23.8"
 
