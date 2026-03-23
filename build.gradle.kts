@@ -25,7 +25,7 @@ tasks.withType<Jar> {
 
 plugins {
     kotlin("jvm") version "2.3.20"
-    id("com.gradleup.shadow") version "9.3.2"
+    id("com.gradleup.shadow") version "9.4.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
