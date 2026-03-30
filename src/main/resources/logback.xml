@@ -1,15 +1,30 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration debug="true">
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%green(%d{HH:mm:ss}) %cyan([%-5.5t]) %boldCyan(%0.-5p) %yellow(%-20.20logger{19}) %cyan(:) %m%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="no.nav.syfo" level="DEBUG"/>
-
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </root>
+<configuration>
+    <condition class="ch.qos.logback.core.boolex.IsPropertyNullCondition">
+        <key>NAIS_CLUSTER_NAME</key>
+    </condition>
+    <if>
+        <then>
+            <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>
+                        %d{HH:mm:ss.SSS} %highlight(%-5level) %cyan([%thread]) %yellow(%logger{20}) - %msg%n
+                    </pattern>
+                </encoder>
+            </appender>
+            <root level="info">
+                <appender-ref ref="stdout"/>
+            </root>
+        </then>
+        <else>
+            <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+            <logger name="no.nav" level="INFO"/>
+            <logger name="org.apache.cxf.services" level="WARN"/>
+            <logger name="org.apache.cxf.ws.addressing" level="ERROR"/>
+            <root level="info">
+                <appender-ref ref="stdout_json"/>
+            </root>
+        </else>
+    </if>
 </configuration>

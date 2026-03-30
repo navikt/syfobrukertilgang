@@ -7,15 +7,15 @@ version = "1.0-SNAPSHOT"
 val coroutinesVersion = "1.10.2"
 val kotlinSerializationVersion = "0.20.0"
 val ktorVersion = "3.2.0"
-val logbackVersion = "1.5.27"
+val logbackVersion = "1.5.32"
 val logstashEncoderVersion = "7.4"
 val prometheusVersion = "0.16.0"
-val jacksonVersion = "2.21.0"
+val jacksonVersion = "2.21.1"
 val mockkVersion = "1.14.9"
-val kotestVersion = "6.1.2"
+val kotestVersion = "6.1.7"
 val kotestExtensionsVersion = "2.0.0"
-val kotlinVersion = "2.3.0"
-val javaJwtVersion = "4.5.0"
+val kotlinVersion = "2.3.20"
+val javaJwtVersion = "4.5.1"
 val nimbusVersion = "9.48"
 val detektVersion = "1.23.8"
 
@@ -24,8 +24,8 @@ tasks.withType<Jar> {
 }
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "2.3.20"
+    id("com.gradleup.shadow") version "9.4.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
@@ -83,7 +83,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     constraints {
-        implementation("io.netty:netty-codec:4.2.9.Final")
+        implementation("io.netty:netty-codec:4.2.10.Final")
     }
 }
 
@@ -99,13 +99,13 @@ java.toolchain {
 }
 
 tasks {
-    create("printVersion") {
+    register("printVersion") {
         println(project.version)
     }
 
     withType<ShadowJar> {
         transform(ServiceFileTransformer::class.java) {
-            setPath("META-INF/cxf")
+            path = "META-INF/cxf"
             include("bus-extensions.txt")
         }
     }
