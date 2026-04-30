@@ -1,4 +1,4 @@
-# syfobrukertilgang
+# API for tilgang til ansatte i sykefraværsoppfølgingen
 
 [![Build & Deploy](https://github.com/navikt/syfobrukertilgang/actions/workflows/build-and-deploy.yaml/badge.svg)](https://github.com/navikt/syfobrukertilgang/actions/workflows/build-and-deploy.yaml)
 
@@ -38,39 +38,6 @@ Respons:
 - `401 Unauthorized` hvis token mangler, ikke er gyldig, eller ikke inneholder `pid`
 
 Operasjonelt kan disse to `false`-utfallene skilles ved å følge Prometheus-metrikkene `syfobrukertilgang_call_narmesteleder_success_count` og `syfobrukertilgang_call_narmesteleder_fail_count` på `/prometheus`.
-
-### Drift/endepunkter
-
-- **GET** `/is_alive`
-- **GET** `/is_ready`
-- **GET** `/prometheus`
-
-## Autentisering
-
-### Inbound
-
-Den beskyttede API-ruten kjører bak `authenticate("tokenx")`.
-
-- JWT valideres mot TokenX sitt well-known/JWK-oppsett
-- tokenets audience må inneholde appens `TOKEN_X_CLIENT_ID`
-- `acr` må være `Level4` eller `idporten-loa-high`
-- `pid`-claim brukes som identen til innlogget bruker
-
-I NAIS er inbound nettverkstilgang eksplisitt åpnet for:
-
-- `syfomotebehov` (`dev-fss`, `dev-gcp`, `prod-fss`, `prod-gcp`)
-- `syfooppfolgingsplanservice` (`dev-fss`, `prod-fss`)
-- `oppfolgingsplan-backend`
-
-### Outbound
-
-Ved oppslag mot `narmesteleder` bruker appen Azure AD client credentials.
-
-- token hentes fra `AZURE_OPENID_CONFIG_TOKEN_ENDPOINT`
-- klienten autentiserer seg med `AZURE_APP_CLIENT_ID` og `AZURE_APP_CLIENT_SECRET`
-- kall går til `NARMESTELEDER_URL/leder/narmesteleder/aktive`
-- scope styres av `NARMESTELEDER_SCOPE`
-- headeren `Narmeste-Leder-Fnr` brukes for å hente aktive relasjoner for innlogget bruker
 
 ## Arkitektur
 
@@ -127,18 +94,6 @@ Applikasjonen bruker `application.conf` med `ktor.environment=dev` lokalt. Port 
 ```
 
 `./gradlew build` kjører build, tester og statisk analyse samlet.
-
-## Teknologier og observability
-
-- Kotlin
-- Ktor
-- Gradle (Kotlin DSL)
-- Jackson
-- Kotest og MockK
-- Prometheus-metrikker på `/prometheus`
-- egne tellere for vellykkede og feilede kall mot `narmesteleder`
-- NAIS-observability med logging til Elastic og Loki, samt auto-instrumentering for Java
-- alarmer for nedetid og høy andel HTTP 4xx/5xx i `nais/alerts.yaml`
 
 ## Team og kontakt
 
