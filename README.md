@@ -1,6 +1,10 @@
 # API for tilgang til ansatte i sykefraværsoppfølgingen
 
 [![Build & Deploy](https://github.com/navikt/syfobrukertilgang/actions/workflows/build-and-deploy.yaml/badge.svg)](https://github.com/navikt/syfobrukertilgang/actions/workflows/build-and-deploy.yaml)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Ktor](https://img.shields.io/badge/Ktor-3.2.0-087CFA?logo=ktor&logoColor=white)](https://ktor.io/)
+[![Gradle](https://img.shields.io/badge/Gradle-9.4.1-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
+[![Kotest](https://img.shields.io/badge/Kotest-6.1.11-FF6B6B)](https://kotest.io/)
 
 ## Miljøer
 
