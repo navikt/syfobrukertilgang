@@ -9,9 +9,7 @@
 
 ## Formål
 
-`syfobrukertilgang` er et backend-API som avgjør om en innlogget bruker har tilgang til en ansatt i sykefraværsoppfølgingen.
-
-Tjenesten:
+Backend-API tjeneste som avgjør om en innlogget bruker har tilgang til en ansatt i sykefraværsoppfølgingen.
 
 - mottar forespørsler på vegne av en innlogget bruker
 - leser personident fra token og ansattens personident fra request-header
@@ -20,24 +18,7 @@ Tjenesten:
 
 ## API
 
-### Beskyttet API
-
 **GET** `/api/v2/tilgang/ansatt`
-
-Header:
-
-- `Authorization: Bearer <token>`
-- `Nav-Personident: <11 siffer>`
-
-Respons:
-
-- `200 OK` med `true` eller `false`
-  - `true` betyr at tilgang ble bekreftet
-  - `false` betyr enten at brukeren ikke har en aktiv relasjon til ansatt, eller at oppslaget mot `narmesteleder` feilet
-- `400 Bad Request` hvis `Nav-Personident` mangler eller er ugyldig
-- `401 Unauthorized` hvis token mangler, ikke er gyldig, eller ikke inneholder `pid`
-
-Operasjonelt kan disse to `false`-utfallene skilles ved å følge Prometheus-metrikkene `syfobrukertilgang_call_narmesteleder_success_count` og `syfobrukertilgang_call_narmesteleder_fail_count` på `/prometheus`.
 
 ## Arkitektur
 
@@ -51,9 +32,7 @@ graph LR
     B -->|true / false| A
 ```
 
-Ved oppstart leses TokenX sitt well-known-endepunkt for å hente issuer og `jwks_uri`. Selve JWK-oppslagene håndteres deretter av JWK-provider/cache, ikke som et eksplisitt well-known-oppslag per request i applikasjonskoden.
-
-## Kom i gang
+## Utvikling (kjøre lokalt)
 
 ### Forutsetninger
 
@@ -95,7 +74,6 @@ Applikasjonen bruker `application.conf` med `ktor.environment=dev` lokalt. Port 
 
 `./gradlew build` kjører build, tester og statisk analyse samlet.
 
-## Team og kontakt
+## For Nav-ansatte
 
-- Team: `team-esyfo`
-- CODEOWNERS: `@navikt/team-esyfo`
+Interne henvendelser kan sendes via Slack i kanalen [#esyfo](https://nav-it.slack.com/archives/C012X796B4L).
