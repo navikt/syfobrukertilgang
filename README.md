@@ -8,8 +8,9 @@
 
 ## Miljøer
 
-- 🚀 [Produksjon](https://syfobrukertilgang.intern.nav.no)
-- 🛠️ [Utvikling](https://syfobrukertilgang.intern.dev.nav.no)
+🚀 [Produksjon](https://syfobrukertilgang.intern.nav.no)
+
+🛠️ [Utvikling](https://syfobrukertilgang.intern.dev.nav.no)
 
 ## Formål
 
