@@ -6,12 +6,6 @@
 [![Gradle](https://img.shields.io/badge/Gradle-9.4.1-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
 [![Kotest](https://img.shields.io/badge/Kotest-6.1.11-FF6B6B)](https://kotest.io/)
 
-## Miljøer
-
-🚀 [Produksjon](https://syfobrukertilgang.intern.nav.no)
-
-🛠️ [Utvikling](https://syfobrukertilgang.intern.dev.nav.no)
-
 ## Formål
 
 Backend-API tjeneste som avgjør om en innlogget bruker har tilgang til en ansatt i sykefraværsoppfølgingen.
