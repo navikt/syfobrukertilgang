@@ -6,6 +6,8 @@
 [![Gradle](https://img.shields.io/badge/Gradle-9.4.1-02303A?logo=gradle&logoColor=white)](https://gradle.org/)
 [![Kotest](https://img.shields.io/badge/Kotest-6.1.11-FF6B6B)](https://kotest.io/)
 
+> **Merk:** Tjenesten er kun for internt bruk av eksisterende konsumenter. Nye tjenester skal ikke integrere seg mot den.
+
 ## Formål
 
 Backend-API tjeneste som avgjør om en innlogget bruker har tilgang til en ansatt i sykefraværsoppfølgingen.
