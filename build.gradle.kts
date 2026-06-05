@@ -18,6 +18,7 @@ val kotlinVersion = "2.3.21"
 val javaJwtVersion = "4.5.2"
 val nimbusVersion = "9.48"
 val detektVersion = "1.23.8"
+val nettyVersion = "4.2.15.Final"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
@@ -83,7 +84,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     constraints {
-        implementation("io.netty:netty-codec:4.2.14.Final")
+        implementation("io.netty:netty-codec-http:$nettyVersion")
     }
 }
 
