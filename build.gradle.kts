@@ -16,7 +16,7 @@ val kotestVersion = "6.1.11"
 val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "2.3.21"
 val javaJwtVersion = "4.5.2"
-val nimbusVersion = "9.48"
+val nimbusVersion = "10.9.1"
 val detektVersion = "1.23.8"
 val nettyVersion = "4.2.15.Final"
 
