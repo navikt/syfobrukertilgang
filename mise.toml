@@ -1,0 +1,6 @@
+[tools]
+java = "21"
+
+[tasks.test]
+description = "Run tests"
+run = "./gradlew test"

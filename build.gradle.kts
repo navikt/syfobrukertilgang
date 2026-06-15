@@ -4,28 +4,29 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
-val coroutinesVersion = "1.10.2"
+val coroutinesVersion = "1.11.0"
 val kotlinSerializationVersion = "0.20.0"
 val ktorVersion = "3.2.0"
-val logbackVersion = "1.5.32"
 val logstashEncoderVersion = "9.0"
+val logbackVersion = "1.5.34"
 val prometheusVersion = "0.16.0"
-val jacksonVersion = "2.21.2"
-val mockkVersion = "1.14.9"
-val kotestVersion = "6.1.10"
+val jacksonVersion = "2.22.0"
+val mockkVersion = "1.14.11"
+val kotestVersion = "6.1.11"
 val kotestExtensionsVersion = "2.0.0"
-val kotlinVersion = "2.3.20"
-val javaJwtVersion = "4.5.1"
+val kotlinVersion = "2.4.0"
+val javaJwtVersion = "4.5.2"
 val nimbusVersion = "9.48"
 val detektVersion = "1.23.8"
+val nettyVersion = "4.2.15.Final"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
 }
 
 plugins {
-    kotlin("jvm") version "2.3.20"
-    id("com.gradleup.shadow") version "9.4.1"
+    kotlin("jvm") version "2.3.21"
+    id("com.gradleup.shadow") version "9.4.2"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
@@ -83,7 +84,7 @@ dependencies {
     api("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     constraints {
-        implementation("io.netty:netty-codec:4.2.12.Final")
+        implementation("io.netty:netty-codec-http:$nettyVersion")
     }
 }
 
@@ -94,7 +95,7 @@ detekt {
 }
 
 java.toolchain {
-    languageVersion.set(JavaLanguageVersion.of(19))
+    languageVersion.set(JavaLanguageVersion.of(21))
     vendor.set(JvmVendorSpec.ADOPTIUM)
 }
 
