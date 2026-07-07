@@ -17,7 +17,6 @@ val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "2.4.0"
 val javaJwtVersion = "4.5.2"
 val nimbusVersion = "9.48"
-val detektVersion = "1.23.8"
 val nettyVersion = "4.2.15.Final"
 
 tasks.withType<Jar> {
@@ -27,7 +26,7 @@ tasks.withType<Jar> {
 plugins {
     kotlin("jvm") version "2.3.21"
     id("com.gradleup.shadow") version "9.4.3"
-    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
 
 repositories {
@@ -86,12 +85,6 @@ dependencies {
     constraints {
         implementation("io.netty:netty-codec-http:$nettyVersion")
     }
-}
-
-detekt {
-    toolVersion = detektVersion
-    config.setFrom(file("config/detekt/detekt.yml"))
-    buildUponDefaultConfig = true
 }
 
 java.toolchain {

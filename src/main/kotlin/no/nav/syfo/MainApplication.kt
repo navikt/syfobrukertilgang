@@ -1,13 +1,17 @@
 package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.config.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.config.HoconApplicationConfig
+import io.ktor.server.engine.applicationEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.request.uri
+import io.ktor.server.routing.routing
 import no.nav.syfo.api.registerPodApi
 import no.nav.syfo.api.registerPrometheusApi
 import no.nav.syfo.application.installAuthentication
@@ -28,28 +32,29 @@ const val SERVER_SHUTDOWN_GRACE_PERIOD = 10L
 const val SERVER_SHUTDOWN_TIMEOUT = 10L
 
 fun main() {
-    val server = embeddedServer(
-        factory = Netty,
-        environment = applicationEnvironment {
-            log = LoggerFactory.getLogger("ktor.application")
-            config = HoconApplicationConfig(ConfigFactory.load())
-        },
-        configure = {
-            connector {
-                port = env.applicationPort
-            }
-
-        },
-        module = {
-            state.running = true
-            serverModule()
-        }
-    )
+    val server =
+        embeddedServer(
+            factory = Netty,
+            environment =
+                applicationEnvironment {
+                    log = LoggerFactory.getLogger("ktor.application")
+                    config = HoconApplicationConfig(ConfigFactory.load())
+                },
+            configure = {
+                connector {
+                    port = env.applicationPort
+                }
+            },
+            module = {
+                state.running = true
+                serverModule()
+            },
+        )
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
             server.stop(SERVER_SHUTDOWN_GRACE_PERIOD, SERVER_SHUTDOWN_TIMEOUT, TimeUnit.SECONDS)
-        }
+        },
     )
 
     server.start(wait = true)
@@ -61,15 +66,16 @@ fun Application.serverModule() {
     installContentNegotiation()
     installCallId()
 
-    val wellKnownTokenX = getWellKnown(
-        wellKnownUrl = env.tokenXWellKnownUrl
-    )
+    val wellKnownTokenX =
+        getWellKnown(
+            wellKnownUrl = env.tokenXWellKnownUrl,
+        )
 
     val jwkProviderTokenX = jwkProvider(wellKnownTokenX.jwksUri)
 
     installAuthentication(
         jwkProviderTokenX,
-        wellKnownTokenX.issuer
+        wellKnownTokenX.issuer,
     )
 
     installStatusPages()
@@ -83,17 +89,19 @@ fun Application.serverModule() {
         }
     }
 
-    val azureADTokenClient = AzureADTokenClient(
-        baseUrl = env.aadTokenEndpoint,
-        clientId = env.aadClientId,
-        clientSecret = env.aadClientSecret
-    )
+    val azureADTokenClient =
+        AzureADTokenClient(
+            baseUrl = env.aadTokenEndpoint,
+            clientId = env.aadClientId,
+            clientSecret = env.aadClientSecret,
+        )
 
-    val narmestelederClient = NarmestelederClient(
-        env.narmestelederUrl,
-        env.narmestelederScope,
-        azureADTokenClient
-    )
+    val narmestelederClient =
+        NarmestelederClient(
+            env.narmestelederUrl,
+            env.narmestelederScope,
+            azureADTokenClient,
+        )
 
     val ansattTilgangService = AnsattTilgangService(narmestelederClient)
 
@@ -119,4 +127,7 @@ fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }
 
-data class ApplicationState(var running: Boolean = false, var initialized: Boolean = false)
+data class ApplicationState(
+    var running: Boolean = false,
+    var initialized: Boolean = false,
+)

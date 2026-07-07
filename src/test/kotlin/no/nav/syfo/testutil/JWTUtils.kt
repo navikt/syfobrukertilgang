@@ -10,7 +10,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 fun generateTokenXToken(
     audience: String,
@@ -22,7 +23,8 @@ fun generateTokenXToken(
     val key = getDefaultRSAKey()
     val alg = Algorithm.RSA256(key.toRSAPublicKey(), key.toRSAPrivateKey())
 
-    return JWT.create()
+    return JWT
+        .create()
         .withKeyId(key.keyID)
         .withIssuer(issuer)
         .withAudience(audience)
@@ -38,12 +40,8 @@ fun generateTokenXToken(
         .sign(alg)
 }
 
-private fun getDefaultRSAKey(): RSAKey {
-    return getJWKSet().keys.first() as RSAKey
-}
+private fun getDefaultRSAKey(): RSAKey = getJWKSet().keys.first() as RSAKey
 
-private fun getJWKSet(): JWKSet {
-    return JWKSet.parse(getFileAsString("src/test/resources/jwkset.json"))
-}
+private fun getJWKSet(): JWKSet = JWKSet.parse(getFileAsString("src/test/resources/jwkset.json"))
 
 fun getFileAsString(filePath: String) = String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8)

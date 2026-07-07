@@ -1,14 +1,12 @@
 package no.nav.syfo.api
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
 import no.nav.syfo.ApplicationState
 
-fun Routing.registerPodApi(
-    applicationState: ApplicationState
-) {
+fun Routing.registerPodApi(applicationState: ApplicationState) {
     get("/is_alive") {
         if (applicationState.running) {
             call.respondText("I'm alive! :)")

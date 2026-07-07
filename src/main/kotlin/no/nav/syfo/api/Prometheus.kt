@@ -1,20 +1,21 @@
 package no.nav.syfo.api
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.ContentType
+import io.ktor.server.response.respondTextWriter
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports
 
-fun Routing.registerPrometheusApi(
-    collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
-) {
+fun Routing.registerPrometheusApi(collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
     DefaultExports.initialize()
 
     get("/prometheus") {
-        val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: setOf()
+        val names =
+            call.request.queryParameters
+                .getAll("name[]")
+                ?.toSet() ?: setOf()
         call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }

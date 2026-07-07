@@ -1,11 +1,15 @@
 package no.nav.syfo.application
 
 import com.auth0.jwk.JwkProvider
-import io.ktor.http.auth.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
+import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTCredential
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.request.header
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.env
 import org.slf4j.Logger
@@ -31,7 +35,8 @@ fun Application.installAuthentication(
                     hasSyfobrukertilgangAudience(
                         credentials,
                         env.syfobrukertilgangTokenXClientId,
-                    ) && isNiva4(credentials) -> {
+                    ) &&
+                        isNiva4(credentials) -> {
                         JWTPrincipal(credentials.payload)
                     }
 
@@ -57,11 +62,14 @@ fun ApplicationCall.getToken(): String? {
     return null
 }
 
-fun hasSyfobrukertilgangAudience(credentials: JWTCredential, clientId: String): Boolean {
-    return credentials.payload.audience.contains(clientId)
-}
+fun hasSyfobrukertilgangAudience(
+    credentials: JWTCredential,
+    clientId: String,
+): Boolean = credentials.payload.audience.contains(clientId)
 
-fun isNiva4(credentials: JWTCredential): Boolean {
-    return "Level4" == credentials.payload.getClaim("acr")
-        .asString() || "idporten-loa-high" == credentials.payload.getClaim("acr").asString()
-}
+fun isNiva4(credentials: JWTCredential): Boolean =
+    "Level4" ==
+        credentials.payload
+            .getClaim("acr")
+            .asString() ||
+        "idporten-loa-high" == credentials.payload.getClaim("acr").asString()

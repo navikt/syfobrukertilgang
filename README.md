@@ -70,7 +70,6 @@ Applikasjonen bruker `application.conf` med `ktor.environment=dev` lokalt. Port 
 ```bash
 ./gradlew shadowJar
 ./gradlew test
-./gradlew detekt
 ```
 
 `./gradlew build` kjører build, tester og statisk analyse samlet.

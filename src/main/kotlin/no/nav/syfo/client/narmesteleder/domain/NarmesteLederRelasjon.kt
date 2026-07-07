@@ -1,7 +1,7 @@
 package no.nav.syfo.client.narmesteleder.domain
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class NarmesteLederRelasjon(
     val narmesteLederId: UUID,
@@ -14,12 +14,12 @@ data class NarmesteLederRelasjon(
     val aktivTom: LocalDate?,
     val arbeidsgiverForskutterer: Boolean?,
     val skrivetilgang: Boolean,
-    val tilganger: List<Tilgang>
+    val tilganger: List<Tilgang>,
 )
 
 enum class Tilgang {
     SYKMELDING,
     SYKEPENGESOKNAD,
     MOTE,
-    OPPFOLGINGSPLAN
+    OPPFOLGINGSPLAN,
 }
