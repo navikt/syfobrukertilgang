@@ -21,7 +21,7 @@ const val BASE_PATH_V2: String = "/api/v2/tilgang/ansatt"
 
 fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService) {
     route(BASE_PATH_V2) {
-        get() {
+        get {
             try {
                 val ansattFnr: String =
                     getPersonIdent()?.takeIf { validateFnr(it) } ?: throw IllegalArgumentException("Fnr mangler")
@@ -34,11 +34,11 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                         LOG.warn(
                             "Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}",
                             callIdArgument(callId),
-                            consumerIdArgument(getConsumerId())
+                            consumerIdArgument(getConsumerId()),
                         )
                         call.respond(
                             HttpStatusCode.Unauthorized,
-                            "Kan ikke hente tilgang til ansatt: 'pid'-claim mangler i token fra id-porten"
+                            "Kan ikke hente tilgang til ansatt: 'pid'-claim mangler i token fra id-porten",
                         )
                     } else {
                         val loggedInFnr = pidClaim.asString()
@@ -48,7 +48,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                             LOG.warn(
                                 "Innlogget bruker har ikke tilgang til oppslått ansatt, {}, {}",
                                 callIdArgument(callId),
-                                consumerIdArgument(getConsumerId())
+                                consumerIdArgument(getConsumerId()),
                             )
                             call.respond(false)
                         }
@@ -57,7 +57,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                     LOG.warn(
                         "Mangler credentials for å authorisere bruker for tilgang til ansatt, {}, {}",
                         callIdArgument(callId),
-                        consumerIdArgument(getConsumerId())
+                        consumerIdArgument(getConsumerId()),
                     )
                     call.respond(HttpStatusCode.Unauthorized, "Kan ikke hente tilgang til ansatt: Mangler credentials")
                 }
@@ -66,7 +66,7 @@ fun Route.registerAnsattTilgangApiV2(ansattTilgangService: AnsattTilgangService)
                     "Kan ikke hente tilgang til ansatt med fnr: {}, {}, {}",
                     e.message,
                     callIdArgument(call.getCallId()),
-                    consumerIdArgument(getConsumerId())
+                    consumerIdArgument(getConsumerId()),
                 )
                 call.respond(HttpStatusCode.BadRequest, e.message ?: "Kan ikke hente tilgang til ansatt")
             }

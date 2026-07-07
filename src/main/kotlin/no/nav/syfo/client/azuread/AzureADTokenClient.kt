@@ -14,32 +14,36 @@ import kotlin.collections.set
 class AzureADTokenClient(
     private val baseUrl: String,
     private val clientId: String,
-    private val clientSecret: String
+    private val clientSecret: String,
 ) {
-
     private var azureAdTokenMap: HashMap<String, AzureAdResponse> = HashMap()
 
     suspend fun accessToken(scope: String): String {
         val omToMinutter = Instant.now().plusSeconds(ONE_HUNDRED_AND_TWENTY_SECONDS)
         val azureAdResponse = azureAdTokenMap[scope]
 
-        if (azureAdResponse == null || azureAdResponse.issuedOn!!.plusSeconds(azureAdResponse.expires_in)
+        if (azureAdResponse == null ||
+            azureAdResponse.issuedOn!!
+                .plusSeconds(azureAdResponse.expires_in)
                 .isBefore(omToMinutter)
         ) {
             LOG.info("Henter nytt token fra Azure AD for scope $scope")
 
             return try {
-                val response: HttpResponse = httpClientProxy().post(baseUrl) {
-                    accept(ContentType.Application.Json)
-                    setBody(FormDataContent(
-                        Parameters.build {
-                            append("client_id", clientId)
-                            append("client_secret", clientSecret)
-                            append("grant_type", "client_credentials")
-                            append("scope", scope)
-                        }
-                    ))
-                }
+                val response: HttpResponse =
+                    httpClientProxy().post(baseUrl) {
+                        accept(ContentType.Application.Json)
+                        setBody(
+                            FormDataContent(
+                                Parameters.build {
+                                    append("client_id", clientId)
+                                    append("client_secret", clientSecret)
+                                    append("grant_type", "client_credentials")
+                                    append("scope", scope)
+                                },
+                            ),
+                        )
+                    }
                 azureAdTokenMap[scope] = response.body()
                 azureAdTokenMap[scope]!!.access_token
             } catch (e: FetchAzureAdTokenException) {
@@ -63,7 +67,9 @@ data class AzureAdResponse(
     var expires_on: Instant?,
     var not_before: String?,
     var resource: String?,
-    var issuedOn: Instant? = Instant.now()
+    var issuedOn: Instant? = Instant.now(),
 )
 
-class FetchAzureAdTokenException(message: String) : Exception(message)
+class FetchAzureAdTokenException(
+    message: String,
+) : Exception(message)

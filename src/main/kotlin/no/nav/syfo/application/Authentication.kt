@@ -31,7 +31,8 @@ fun Application.installAuthentication(
                     hasSyfobrukertilgangAudience(
                         credentials,
                         env.syfobrukertilgangTokenXClientId,
-                    ) && isNiva4(credentials) -> {
+                    ) &&
+                        isNiva4(credentials) -> {
                         JWTPrincipal(credentials.payload)
                     }
 
@@ -57,11 +58,14 @@ fun ApplicationCall.getToken(): String? {
     return null
 }
 
-fun hasSyfobrukertilgangAudience(credentials: JWTCredential, clientId: String): Boolean {
-    return credentials.payload.audience.contains(clientId)
-}
+fun hasSyfobrukertilgangAudience(
+    credentials: JWTCredential,
+    clientId: String,
+): Boolean = credentials.payload.audience.contains(clientId)
 
-fun isNiva4(credentials: JWTCredential): Boolean {
-    return "Level4" == credentials.payload.getClaim("acr")
-        .asString() || "idporten-loa-high" == credentials.payload.getClaim("acr").asString()
-}
+fun isNiva4(credentials: JWTCredential): Boolean =
+    "Level4" ==
+        credentials.payload
+            .getClaim("acr")
+            .asString() ||
+        "idporten-loa-high" == credentials.payload.getClaim("acr").asString()

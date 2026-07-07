@@ -28,28 +28,29 @@ const val SERVER_SHUTDOWN_GRACE_PERIOD = 10L
 const val SERVER_SHUTDOWN_TIMEOUT = 10L
 
 fun main() {
-    val server = embeddedServer(
-        factory = Netty,
-        environment = applicationEnvironment {
-            log = LoggerFactory.getLogger("ktor.application")
-            config = HoconApplicationConfig(ConfigFactory.load())
-        },
-        configure = {
-            connector {
-                port = env.applicationPort
-            }
-
-        },
-        module = {
-            state.running = true
-            serverModule()
-        }
-    )
+    val server =
+        embeddedServer(
+            factory = Netty,
+            environment =
+                applicationEnvironment {
+                    log = LoggerFactory.getLogger("ktor.application")
+                    config = HoconApplicationConfig(ConfigFactory.load())
+                },
+            configure = {
+                connector {
+                    port = env.applicationPort
+                }
+            },
+            module = {
+                state.running = true
+                serverModule()
+            },
+        )
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
             server.stop(SERVER_SHUTDOWN_GRACE_PERIOD, SERVER_SHUTDOWN_TIMEOUT, TimeUnit.SECONDS)
-        }
+        },
     )
 
     server.start(wait = true)
@@ -61,15 +62,16 @@ fun Application.serverModule() {
     installContentNegotiation()
     installCallId()
 
-    val wellKnownTokenX = getWellKnown(
-        wellKnownUrl = env.tokenXWellKnownUrl
-    )
+    val wellKnownTokenX =
+        getWellKnown(
+            wellKnownUrl = env.tokenXWellKnownUrl,
+        )
 
     val jwkProviderTokenX = jwkProvider(wellKnownTokenX.jwksUri)
 
     installAuthentication(
         jwkProviderTokenX,
-        wellKnownTokenX.issuer
+        wellKnownTokenX.issuer,
     )
 
     installStatusPages()
@@ -83,17 +85,19 @@ fun Application.serverModule() {
         }
     }
 
-    val azureADTokenClient = AzureADTokenClient(
-        baseUrl = env.aadTokenEndpoint,
-        clientId = env.aadClientId,
-        clientSecret = env.aadClientSecret
-    )
+    val azureADTokenClient =
+        AzureADTokenClient(
+            baseUrl = env.aadTokenEndpoint,
+            clientId = env.aadClientId,
+            clientSecret = env.aadClientSecret,
+        )
 
-    val narmestelederClient = NarmestelederClient(
-        env.narmestelederUrl,
-        env.narmestelederScope,
-        azureADTokenClient
-    )
+    val narmestelederClient =
+        NarmestelederClient(
+            env.narmestelederUrl,
+            env.narmestelederScope,
+            azureADTokenClient,
+        )
 
     val ansattTilgangService = AnsattTilgangService(narmestelederClient)
 
@@ -119,4 +123,7 @@ fun Application.isProd(block: () -> Unit) {
     if (envKind == "production") block()
 }
 
-data class ApplicationState(var running: Boolean = false, var initialized: Boolean = false)
+data class ApplicationState(
+    var running: Boolean = false,
+    var initialized: Boolean = false,
+)

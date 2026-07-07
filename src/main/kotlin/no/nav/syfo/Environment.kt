@@ -13,7 +13,7 @@ fun getEnvironment(): Environment {
     return if (appIsRunningLocally) {
         objectMapper.readValue(
             firstExistingFile(LOCAL_ENV_PROPERTIES_PATH, DEFAULT_LOCAL_ENV_PROPERTIES_PATH),
-            Environment::class.java
+            Environment::class.java,
         )
     } else {
         Environment(
@@ -26,7 +26,7 @@ fun getEnvironment(): Environment {
             getEnvVar("AZURE_APP_CLIENT_SECRET"),
             getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
             getEnvVar("TOKEN_X_CLIENT_ID"),
-            getEnvVar("TOKEN_X_WELL_KNOWN_URL")
+            getEnvVar("TOKEN_X_WELL_KNOWN_URL"),
         )
     }
 }
@@ -43,14 +43,19 @@ data class Environment(
     val aadClientSecret: String,
     val aadTokenEndpoint: String,
     val syfobrukertilgangTokenXClientId: String,
-    val tokenXWellKnownUrl: String
+    val tokenXWellKnownUrl: String,
 )
 
-fun getEnvVar(varName: String, defaultValue: String? = null) =
-    System.getenv(varName) ?: defaultValue ?: throw MissingVariableException(varName)
+fun getEnvVar(
+    varName: String,
+    defaultValue: String? = null,
+) = System.getenv(varName) ?: defaultValue ?: throw MissingVariableException(varName)
 
-private fun firstExistingFile(vararg paths: String) = paths
-    .map(::File)
-    .first(File::exists)
+private fun firstExistingFile(vararg paths: String) =
+    paths
+        .map(::File)
+        .first(File::exists)
 
-class MissingVariableException(varName: String) : RuntimeException("Missing required variable \"$varName\"")
+class MissingVariableException(
+    varName: String,
+) : RuntimeException("Missing required variable \"$varName\"")

@@ -11,9 +11,10 @@ private const val JWK_BUCKET_SIZE = 10L
 private const val JWK_REFILL_RATE = 1L
 
 fun jwkProvider(wellKnownUri: String): JwkProvider =
-    JwkProviderBuilder(URL(wellKnownUri)).cached(
-        JWK_CACHE_SIZE,
-        JWK_CACHE_EXPIRES_IN,
-        TimeUnit.HOURS
-    )
-        .rateLimited(JWK_BUCKET_SIZE, JWK_REFILL_RATE, TimeUnit.MINUTES).build()
+    JwkProviderBuilder(URL(wellKnownUri))
+        .cached(
+            JWK_CACHE_SIZE,
+            JWK_CACHE_EXPIRES_IN,
+            TimeUnit.HOURS,
+        ).rateLimited(JWK_BUCKET_SIZE, JWK_REFILL_RATE, TimeUnit.MINUTES)
+        .build()

@@ -14,12 +14,12 @@ data class NarmesteLederRelasjon(
     val aktivTom: LocalDate?,
     val arbeidsgiverForskutterer: Boolean?,
     val skrivetilgang: Boolean,
-    val tilganger: List<Tilgang>
+    val tilganger: List<Tilgang>,
 )
 
 enum class Tilgang {
     SYKMELDING,
     SYKEPENGESOKNAD,
     MOTE,
-    OPPFOLGINGSPLAN
+    OPPFOLGINGSPLAN,
 }

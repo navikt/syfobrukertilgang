@@ -7,17 +7,11 @@ import io.ktor.util.pipeline.*
 
 const val JWT_CLAIM_AZP = "azp"
 
-fun PipelineContext<out Unit, ApplicationCall>.getCallId(): String {
-    return this.call.getCallId()
-}
+fun PipelineContext<out Unit, ApplicationCall>.getCallId(): String = this.call.getCallId()
 
-fun ApplicationCall.getCallId(): String {
-    return this.request.headers[NAV_CALL_ID_HEADER].toString()
-}
+fun ApplicationCall.getCallId(): String = this.request.headers[NAV_CALL_ID_HEADER].toString()
 
-fun ApplicationCall.getBearerHeader(): String? {
-    return this.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
-}
+fun ApplicationCall.getBearerHeader(): String? = this.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
 
 fun ApplicationCall.getConsumerClientId(): String? =
     getBearerHeader()?.let {

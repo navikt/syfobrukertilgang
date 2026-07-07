@@ -41,25 +41,27 @@ fun Application.installStatusPages() {
 
             var isUnexpectedException = false
 
-            val responseStatus: HttpStatusCode = when (cause) {
-                is ResponseException -> {
-                    cause.response.status
-                }
+            val responseStatus: HttpStatusCode =
+                when (cause) {
+                    is ResponseException -> {
+                        cause.response.status
+                    }
 
-                is IllegalArgumentException -> {
-                    HttpStatusCode.BadRequest
-                }
+                    is IllegalArgumentException -> {
+                        HttpStatusCode.BadRequest
+                    }
 
-                else -> {
-                    isUnexpectedException = true
-                    HttpStatusCode.InternalServerError
+                    else -> {
+                        isUnexpectedException = true
+                        HttpStatusCode.InternalServerError
+                    }
                 }
-            }
-            val message = if (isUnexpectedException) {
-                "The server reported an unexpected error and cannot complete the request."
-            } else {
-                cause.message ?: "Unknown error"
-            }
+            val message =
+                if (isUnexpectedException) {
+                    "The server reported an unexpected error and cannot complete the request."
+                } else {
+                    cause.message ?: "Unknown error"
+                }
             call.respond(responseStatus, message)
         }
     }

@@ -6,9 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.nav.syfo.ApplicationState
 
-fun Routing.registerPodApi(
-    applicationState: ApplicationState
-) {
+fun Routing.registerPodApi(applicationState: ApplicationState) {
     get("/is_alive") {
         if (applicationState.running) {
             call.respondText("I'm alive! :)")
