@@ -10,7 +10,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 fun generateTokenXToken(
     audience: String,

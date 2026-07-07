@@ -1,9 +1,13 @@
 package no.nav.syfo.client.narmesteleder
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.call.body
+import io.ktor.client.request.accept
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import no.nav.syfo.client.azuread.AzureADTokenClient
 import no.nav.syfo.client.httpClientDefault
 import no.nav.syfo.client.narmesteleder.domain.Ansatt

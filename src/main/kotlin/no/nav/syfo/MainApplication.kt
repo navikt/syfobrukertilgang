@@ -1,13 +1,17 @@
 package no.nav.syfo
 
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.config.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.config.HoconApplicationConfig
+import io.ktor.server.engine.applicationEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.request.uri
+import io.ktor.server.routing.routing
 import no.nav.syfo.api.registerPodApi
 import no.nav.syfo.api.registerPrometheusApi
 import no.nav.syfo.application.installAuthentication

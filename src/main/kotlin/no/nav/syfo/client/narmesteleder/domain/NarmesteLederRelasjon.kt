@@ -1,7 +1,7 @@
 package no.nav.syfo.client.narmesteleder.domain
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class NarmesteLederRelasjon(
     val narmesteLederId: UUID,

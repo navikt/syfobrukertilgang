@@ -1,9 +1,10 @@
 package no.nav.syfo.util
 
 import com.auth0.jwt.JWT
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.util.pipeline.*
+import io.ktor.http.HttpHeaders
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.util.pipeline.PipelineContext
 
 const val JWT_CLAIM_AZP = "azp"
 

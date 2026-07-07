@@ -1,15 +1,17 @@
 package no.nav.syfo.client.azuread
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.call.body
+import io.ktor.client.request.accept
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.Parameters
 import no.nav.syfo.client.httpClientProxy
 import no.nav.syfo.util.ONE_HUNDRED_AND_TWENTY_SECONDS
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import kotlin.collections.set
 
 class AzureADTokenClient(
     private val baseUrl: String,

@@ -1,11 +1,15 @@
 package no.nav.syfo.application
 
 import com.auth0.jwk.JwkProvider
-import io.ktor.http.auth.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
+import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTCredential
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.request.header
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.env
 import org.slf4j.Logger

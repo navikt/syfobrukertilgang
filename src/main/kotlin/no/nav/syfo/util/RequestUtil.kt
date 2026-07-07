@@ -1,9 +1,7 @@
 package no.nav.syfo.util
 
-import io.ktor.server.application.*
-import io.ktor.server.request.*
+import io.ktor.server.request.header
 import io.ktor.server.routing.RoutingContext
-import io.ktor.util.pipeline.*
 import net.logstash.logback.argument.StructuredArguments
 
 const val NAV_CALL_ID_HEADER = "Nav-Call-Id"
