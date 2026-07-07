@@ -49,8 +49,6 @@ spec:
     inbound:
       rules:
         - application: syfomotebehov
-          cluster: prod-fss
-        - application: syfomotebehov
           cluster: prod-gcp
         - application: syfooppfolgingsplanservice
           cluster: prod-fss
