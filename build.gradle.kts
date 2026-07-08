@@ -5,7 +5,6 @@ group = "no.nav.syfo"
 version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.11.0"
-val kotlinSerializationVersion = "0.20.0"
 val ktorVersion = "3.5.1"
 val logstashEncoderVersion = "9.0"
 val logbackVersion = "1.5.37"
@@ -38,8 +37,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinSerializationVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$kotlinSerializationVersion")
 
     implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
