@@ -6,7 +6,7 @@ version = "1.0-SNAPSHOT"
 
 val coroutinesVersion = "1.11.0"
 val kotlinSerializationVersion = "0.20.0"
-val ktorVersion = "3.2.0"
+val ktorVersion = "3.5.1"
 val logstashEncoderVersion = "9.0"
 val logbackVersion = "1.5.37"
 val prometheusVersion = "0.16.0"
@@ -88,7 +88,7 @@ dependencies {
 }
 
 java.toolchain {
-    languageVersion.set(JavaLanguageVersion.of(21))
+    languageVersion.set(JavaLanguageVersion.of(25))
     vendor.set(JvmVendorSpec.ADOPTIUM)
 }
 
