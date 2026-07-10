@@ -1,5 +1,5 @@
 [tools]
-java = "21"
+java = "25"
 
 # Quality checks
 [tasks.build]
