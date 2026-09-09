@@ -2,8 +2,6 @@
 description: 'Autentisering i Kotlin med Texas-sidecar — token, exchange, introspect'
 applyTo: "**/*.kt"
 ---
-<!-- Managed by esyfo-cli. Do not edit manually. Changes will be overwritten.
-     For repo-specific customizations, create your own files without this header. -->
 
 # Authentication — Kotlin (Texas sidecar)
 

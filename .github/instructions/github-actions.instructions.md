@@ -7,6 +7,15 @@ applyTo: ".github/workflows/**"
 
 Standarder for CI/CD-workflows med GitHub Actions på Nais. Sjekk om teamet har et repo med gjenbrukbare workflows før du skriver egne.
 
+## Teamets gjenbrukbare workflows
+
+Dette repoet bruker `jar-app.yaml` fra
+[`navikt/teamesyfo-github-actions-workflows`](https://github.com/navikt/teamesyfo-github-actions-workflows)
+i `.github/workflows/build-and-deploy.yaml`. Dependabot-flyten har en egen
+caller i `.github/workflows/dependabot-automerge.yml`. Kontroller disse
+kallerfilene og teamets workflow-dokumentasjon for gjeldende inputs før
+CI-oppsettet endres.
+
 ## Action Pinning
 
 Pin alle actions til full commit SHA:

@@ -2,8 +2,6 @@
 description: 'Teststandarder for Kotlin — JUnit 5, Spek, testcontainers, mocking'
 applyTo: "**/*.test.kt,**/*.spec.kt,**/*Test.kt,**/*Spec.kt,**/*Spek.kt"
 ---
-<!-- Managed by esyfo-cli. Do not edit manually. Changes will be overwritten.
-     For repo-specific customizations, create your own files without this header. -->
 
 # Testing Standards (Kotlin)
 

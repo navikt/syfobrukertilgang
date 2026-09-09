@@ -2,8 +2,6 @@
 description: 'Ktor-spesifikke mønstre — routing, plugins, StatusPages, Koin DI'
 applyTo: "**/*.kt"
 ---
-<!-- Managed by esyfo-cli. Do not edit manually. Changes will be overwritten.
-     For repo-specific customizations, create your own files without this header. -->
 
 > Framework-specific patterns for Ktor. These extend (and where overlapping, take precedence over) the base kotlin.instructions.md.
 
