@@ -16,7 +16,7 @@ val kotestExtensionsVersion = "2.0.0"
 val kotlinVersion = "2.4.20"
 val javaJwtVersion = "4.6.1"
 val nimbusVersion = "9.48"
-val nettyVersion = "4.2.17.Final"
+val nettyVersion = "4.2.18.Final"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.MainApplicationKt"
